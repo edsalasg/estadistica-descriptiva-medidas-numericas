@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estadística descriptiva: medidas numéricas</title>
+<meta name="description" content="Capítulo 3 de Anderson: medidas de posición, variabilidad, forma, análisis exploratorio, asociación, media ponderada y datos agrupados, con ejercicios en SPSS. Presentación de Pavel Raúl Dennis Quiñónez.">
+<meta name="author" content="Pavel Raúl Dennis Quiñónez">
+<style>
+:root{
+  color-scheme: light;
+  --surface-0:#f4f3f0; --surface-1:#fcfcfb; --surface-2:#eceae5;
+  --line:#e0ded7; --line-strong:#c9c6bd;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#7d7b74;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --s1-soft:#e4eefb;
+  --seq-100:#cde2fb; --seq-200:#9ec5f4; --seq-300:#6da7ec; --seq-400:#3987e5;
+  --seq-500:#256abf; --seq-600:#184f95; --seq-700:#0d366b;
+  --accent:#2a78d6; --warn:#b4690e; --ok:#00713a;
+  --brand:#24398A; --gold:#E1B73D; --brand-soft:#e8ebf6; --gold-soft:#fbf3dd;
+  --radius:10px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --serif:"Times New Roman",Times,Georgia,serif;
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --surface-0:#111110; --surface-1:#1a1a19; --surface-2:#232321;
+  --line:#33332f; --line-strong:#4a4a45;
+  --ink:#ffffff; --ink-2:#c3c2b7; --ink-3:#8f8e85;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+  --s1-soft:#172b45;
+  --seq-100:#0d366b; --seq-200:#184f95; --seq-300:#256abf; --seq-400:#3987e5;
+  --seq-500:#6da7ec; --seq-600:#9ec5f4; --seq-700:#cde2fb;
+  --accent:#3987e5; --warn:#e0a458; --ok:#4fbf85;
+  --brand:#8fa4ec; --gold:#E1B73D; --brand-soft:#1c2440; --gold-soft:#2e2718;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font); background:var(--surface-0); color:var(--ink);
+  -webkit-font-smoothing:antialiased; line-height:1.55; overflow:hidden;
+}
+
+/* ---------- Deck shell ---------- */
+#deck{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:0}
+.slide{
+  position:absolute; inset:0; display:none; flex-direction:column;
+  padding:clamp(24px,3.2vw,54px) clamp(24px,4.5vw,86px) 72px;
+  overflow-y:auto; overflow-x:hidden; background:var(--surface-0);
+  animation:fade .28s ease;
+}
+.slide.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.slide-inner{width:100%; max-width:1180px; margin:0 auto}
+
+/* ---------- Typography ---------- */
+.eyebrow{
+  font-size:clamp(11px,1.05vw,13px); font-weight:650; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--brand); margin:0 0 10px;
+}
+h1{font-size:clamp(30px,4.6vw,60px); line-height:1.08; letter-spacing:-.022em; margin:0 0 18px; font-weight:680}
+h2{font-size:clamp(23px,3.1vw,40px); line-height:1.14; letter-spacing:-.018em; margin:0 0 12px; font-weight:660}
+.slide:not(.cover) h2::after{
+  content:""; display:block; width:56px; height:3px; border-radius:2px; margin-top:9px;
+  background:linear-gradient(90deg,var(--brand) 0%,var(--brand) 45%,var(--gold) 55%,var(--gold) 100%);
+}
+h3{font-size:clamp(16px,1.6vw,21px); line-height:1.3; margin:0 0 10px; font-weight:640; letter-spacing:-.008em}
+p{margin:0 0 14px; font-size:clamp(14px,1.35vw,18px); color:var(--ink-2); max-width:74ch}
+.lead{font-size:clamp(16px,1.75vw,23px); color:var(--ink-2); max-width:60ch; line-height:1.45}
+strong{color:var(--ink); font-weight:640}
+ul,ol{margin:0 0 16px; padding-left:1.15em; font-size:clamp(14px,1.35vw,18px); color:var(--ink-2); max-width:74ch}
+li{margin-bottom:9px}
+li::marker{color:var(--ink-3)}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+a:hover{border-bottom-color:var(--accent)}
+code,.mono{font-family:var(--mono); font-size:.9em}
+
+/* ---------- Layout helpers ---------- */
+.grid{display:grid; gap:clamp(16px,2vw,32px)}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-6-4{grid-template-columns:minmax(0,6fr) minmax(0,4fr)}
+.g-4-6{grid-template-columns:minmax(0,4fr) minmax(0,6fr)}
+.g-5-5{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-7-3{grid-template-columns:minmax(0,7fr) minmax(0,3fr)}
+@media(max-width:900px){.g2,.g3,.g-6-4,.g-4-6,.g-5-5,.g-7-3{grid-template-columns:1fr}}
+.center{display:flex; flex-direction:column; justify-content:center; min-height:100%}
+.mt{margin-top:20px} .mt-s{margin-top:12px} .mb0{margin-bottom:0}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius);
+  padding:clamp(14px,1.5vw,22px);
+}
+.card h3{margin-top:0}
+.card-accent{border-left:3px solid var(--accent)}
+.card-warn{border-left:3px solid var(--warn)}
+.card-ok{border-left:3px solid var(--ok)}
+.callout{
+  background:var(--s1-soft); border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));
+  border-radius:var(--radius); padding:clamp(14px,1.5vw,20px); margin:16px 0;
+}
+.callout p:last-child{margin-bottom:0}
+.callout .k{font-weight:650; color:var(--ink); display:block; margin-bottom:4px; font-size:clamp(13px,1.2vw,16px)}
+
+/* ---------- Tables ---------- */
+.tbl-wrap{overflow-x:auto; margin:0 0 14px; max-width:100%}
+table{table-layout:auto; max-width:100%}
+table{border-collapse:collapse; width:100%; font-size:clamp(12px,1.15vw,15.5px); font-variant-numeric:tabular-nums}
+th,td{padding:7px 11px; text-align:right; border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th .mx{text-transform:none}
+thead th{
+  font-weight:620; color:var(--ink-2); font-size:.88em; letter-spacing:.02em;
+  text-transform:uppercase; border-bottom:1px solid var(--line-strong); white-space:nowrap;
+}
+tbody tr:hover{background:var(--surface-2)}
+tfoot td{font-weight:650; color:var(--ink); border-top:1px solid var(--line-strong); border-bottom:none}
+caption{caption-side:bottom; text-align:left; padding-top:9px; font-size:.85em; color:var(--ink-3)}
+.t-compact th,.t-compact td{padding:5px 9px}
+.t-left td,.t-left th{text-align:left}
+td.hl,th.hl{background:var(--s1-soft)}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Chips / badges ---------- */
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 14px}
+.chip{
+  font-size:clamp(11px,1.05vw,13.5px); padding:4px 11px; border-radius:100px;
+  background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line); font-weight:520;
+}
+.chip.on{background:var(--accent); color:#fff; border-color:var(--accent)}
+.badge{
+  display:inline-block; font-size:.78em; font-weight:650; letter-spacing:.05em; text-transform:uppercase;
+  padding:3px 9px; border-radius:5px; background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line);
+}
+.badge.b1{background:var(--s1-soft); color:var(--accent); border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.badge.bw{background:var(--gold-soft); color:var(--warn); border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+
+/* ---------- Buttons / controls ---------- */
+button, .btn{
+  font-family:inherit; font-size:clamp(12px,1.15vw,14.5px); font-weight:560;
+  padding:7px 15px; border-radius:7px; border:1px solid var(--line-strong);
+  background:var(--surface-1); color:var(--ink); cursor:pointer; transition:.15s;
+}
+button:hover,.btn:hover{background:var(--surface-2); border-color:var(--ink-3)}
+button.on{background:var(--accent); color:#fff; border-color:var(--accent)}
+button.on:hover{filter:brightness(1.08)}
+.ctrl-row{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:0 0 14px}
+.ctrl-row label{font-size:clamp(12px,1.15vw,14.5px); color:var(--ink-2); font-weight:520; display:flex; align-items:center; gap:9px}
+input[type=range]{accent-color:var(--accent); width:clamp(120px,16vw,210px)}
+input[type=number],select{
+  font-family:inherit; font-size:clamp(12px,1.15vw,14.5px); padding:6px 9px; border-radius:7px;
+  border:1px solid var(--line-strong); background:var(--surface-1); color:var(--ink); width:7.5em;
+}
+select{width:auto}
+.val{font-family:var(--mono); font-weight:620; color:var(--ink); min-width:2.6em; display:inline-block; text-align:right}
+
+/* ---------- SPSS panel ---------- */
+.spss{
+  background:var(--surface-1); border:1px solid var(--line); border-left:3px solid var(--s3);
+  border-radius:var(--radius); padding:clamp(14px,1.5vw,20px);
+}
+.spss .hd{display:flex; align-items:center; gap:9px; margin-bottom:11px}
+.spss .hd b{font-size:clamp(13px,1.25vw,16px); letter-spacing:-.005em}
+.spss .tag{font-size:.72em; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--s3); border:1px solid color-mix(in srgb,var(--s3) 35%,transparent); padding:2px 7px; border-radius:4px}
+.spss ol{font-size:clamp(12.5px,1.2vw,15.5px); margin-bottom:0; padding-left:1.25em}
+.spss li{margin-bottom:7px}
+.path{
+  font-family:var(--mono); font-size:.9em; background:var(--surface-2); padding:2px 7px;
+  border-radius:5px; border:1px solid var(--line); color:var(--ink);
+  white-space:normal; overflow-wrap:break-word; box-decoration-break:clone;
+  -webkit-box-decoration-break:clone; line-height:1.7;
+}
+kbd{font-family:var(--mono); font-size:.85em; background:var(--surface-2); border:1px solid var(--line-strong); border-bottom-width:2px; border-radius:4px; padding:1px 6px}
+
+/* ---------- Charts ---------- */
+.chart{width:100%}
+.chart svg{display:block; width:100%; height:auto; overflow:visible}
+.axis line,.axis path,line.axis{stroke:var(--line-strong); stroke-width:1; fill:none}
+.grid-l{stroke:var(--line); stroke-width:1}
+.tick{font-size:12px; fill:var(--ink-3); font-family:var(--font)}
+.axlab{font-size:12.5px; fill:var(--ink-2); font-family:var(--font); font-weight:560}
+.dlab{font-size:12px; fill:var(--ink); font-family:var(--font); font-weight:600; font-variant-numeric:tabular-nums}
+.flab{font-size:13px; fill:var(--ink); font-family:var(--serif); font-style:italic}
+.chart{position:relative; padding-top:12px}
+.chart::before{
+  content:""; position:absolute; top:0; left:0; width:52px; height:2.5px; border-radius:2px;
+  background:linear-gradient(90deg,var(--brand) 0%,var(--brand) 45%,var(--gold) 55%,var(--gold) 100%);
+}
+.chart.plain{padding-top:0}
+.chart.plain::before{display:none}
+.ctitle{font-size:clamp(13px,1.2vw,15.5px); font-weight:620; color:var(--ink); margin:0 0 2px}
+.csub{font-size:clamp(11.5px,1.1vw,13.5px); color:var(--ink-3); margin:0 0 10px}
+.legend{display:flex; flex-wrap:wrap; gap:14px; margin:10px 0 0; font-size:clamp(11.5px,1.1vw,13.5px); color:var(--ink-2)}
+.legend span{display:flex; align-items:center; gap:6px}
+.swatch{width:11px; height:11px; border-radius:3px; flex:none}
+.tip{
+  position:fixed; pointer-events:none; z-index:900; background:var(--surface-1);
+  border:1px solid var(--line-strong); border-radius:7px; padding:7px 11px; font-size:13px;
+  box-shadow:0 4px 18px rgba(0,0,0,.14); opacity:0; transition:opacity .12s; color:var(--ink); max-width:250px;
+}
+.tip.on{opacity:1}
+.tip b{display:block; margin-bottom:2px; font-weight:640}
+.tip .v{font-variant-numeric:tabular-nums; color:var(--ink-2)}
+.mark{transition:opacity .12s}
+.mark:hover{opacity:.82; cursor:pointer}
+
+/* ---------- Fórmulas ---------- */
+.formula{
+  font-family:var(--serif); font-size:clamp(20px,2.3vw,30px); color:var(--ink); line-height:1.3;
+  margin:8px 0 12px; white-space:nowrap;
+}
+.formula.sm{font-size:clamp(16px,1.7vw,22px); margin:4px 0 8px}
+.formula i{font-style:italic}
+.formula .frac{display:inline-flex; flex-direction:column; text-align:center; vertical-align:middle; line-height:1.15; margin:0 .18em}
+.formula .frac>span{padding:0 .25em}
+.formula .frac>span:first-child{border-bottom:1.5px solid currentColor}
+.formula .sq{display:inline-flex; align-items:stretch; vertical-align:middle}
+.formula .sq::before{content:"√"; font-style:normal; margin-right:.05em; align-self:flex-start; line-height:1}
+.formula .sq>span{border-top:1.5px solid currentColor; padding:0 .15em}
+.formula sub{font-size:.62em; font-style:italic}
+.formula sup{font-size:.62em}
+.formula .op{font-style:normal; color:var(--ink-2); margin:0 .15em}
+.formula .lbl{font-family:var(--font); font-style:normal; font-size:.5em; color:var(--ink-3); margin-left:.8em; display:inline-block; white-space:normal; vertical-align:middle; max-width:26em; line-height:1.35}
+.mx{font-family:var(--serif); font-style:italic; font-size:1.08em}
+.hat{position:relative; display:inline-block}
+.hat::after{content:"ˆ"; position:absolute; left:52%; top:-.62em; transform:translateX(-50%); font-size:.85em; font-style:normal; line-height:1}
+.ovl{text-decoration:overline}
+
+/* ---------- Widgets propios del tema ---------- */
+.samples{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin:8px 0 12px}
+.samples .sm{
+  border:1px solid var(--line); border-radius:8px; background:var(--surface-1); padding:8px 6px;
+  text-align:center; font-family:var(--serif); font-style:italic; font-size:clamp(15px,1.5vw,20px); color:var(--ink);
+  transition:.15s;
+}
+.samples .sm.hit{background:var(--brand); color:#fff; border-color:var(--brand)}
+.samples .sm small{display:block; font-family:var(--font); font-style:normal; font-size:11px; color:var(--ink-3); margin-top:2px}
+.samples .sm.hit small{color:#fff; opacity:.85}
+.digits{display:flex; gap:7px; flex-wrap:wrap; margin:6px 0 10px}
+.digits .dg{
+  width:38px; height:44px; border-radius:7px; border:1px solid var(--line-strong); background:var(--surface-1);
+  display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:19px; font-weight:640; color:var(--ink-3);
+  transition:.15s;
+}
+.digits .dg.cur{border-color:var(--brand); color:var(--brand); box-shadow:0 0 0 2px var(--brand-soft)}
+.digits .dg.ok{background:var(--ok); color:#fff; border-color:var(--ok)}
+.digits .dg.no{background:var(--surface-2); color:var(--ink-3); text-decoration:line-through}
+.digits .dg.done{opacity:.55}
+.step-log{font-size:clamp(12.5px,1.2vw,15px); color:var(--ink-2); min-height:3.2em; margin:0 0 8px}
+.step-log b{color:var(--ink)}
+.pick{display:flex; gap:8px; align-items:center; margin:0 0 10px; font-size:clamp(13px,1.25vw,16px); color:var(--ink-2)}
+.pick .slot{
+  width:44px; height:44px; border-radius:9px; border:2px dashed var(--line-strong); display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-style:italic; font-size:22px; color:var(--ink);
+}
+.pick .slot.full{border-style:solid; border-color:var(--brand); background:var(--brand-soft)}
+
+.readouts{display:flex; gap:clamp(14px,2.2vw,34px); flex-wrap:wrap; margin:10px 0 4px}
+.readouts .r{display:flex; flex-direction:column}
+.readouts .n{font-size:clamp(18px,2.2vw,28px); font-weight:660; letter-spacing:-.02em; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.1}
+.readouts .l{font-size:clamp(11px,1.05vw,12.8px); color:var(--ink-3); margin-top:4px; max-width:16ch}
+.readouts .n.b{color:var(--brand)}
+
+.calc{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:8px 0 10px}
+.calc label{display:flex; flex-direction:column; gap:5px; font-size:clamp(12px,1.15vw,14px); color:var(--ink-2); font-weight:540}
+.calc label>span{display:block}
+.calc input,.calc select{width:100%}
+.result{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin:6px 0 10px; padding:12px 16px;
+  border-radius:var(--radius); background:var(--brand-soft); border:1px solid color-mix(in srgb,var(--brand) 25%,transparent);
+}
+.result .big{font-size:clamp(26px,3.4vw,44px); font-weight:680; letter-spacing:-.03em; color:var(--brand); font-variant-numeric:tabular-nums; line-height:1}
+.result .big sup{font-size:.5em; letter-spacing:0}
+.result .lbl{font-size:clamp(12px,1.15vw,14px); color:var(--ink-2)}
+
+.two-vs{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media(max-width:760px){.two-vs{grid-template-columns:1fr}}
+.pend{opacity:.72}
+.dot-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:clamp(11.5px,1.1vw,13.5px); color:var(--ink-2); margin-top:6px}
+.dot-legend span{display:flex; align-items:center; gap:6px}
+.dot-legend i{width:11px; height:11px; border-radius:50%; display:inline-block; flex:none}
+
+/* ---------- Nav / chrome ---------- */
+#bar{
+  position:fixed; left:0; right:0; bottom:0; height:52px; display:flex; align-items:center;
+  gap:12px; padding:0 clamp(14px,2.4vw,30px); background:color-mix(in srgb,var(--surface-1) 92%,transparent);
+  backdrop-filter:blur(10px); border-top:1px solid var(--line); z-index:500;
+}
+#bar .sec{font-size:12.5px; color:var(--ink-3); font-weight:540; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:8px}
+#bar .bchip{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#fff;
+  background:var(--brand); padding:2.5px 8px; border-radius:4px; flex:none}
+#bar .bchip.g{background:var(--gold); color:#3a2f0c}
+#bar #btn-menu{border-color:var(--brand); color:var(--brand); font-weight:620}
+#bar #btn-menu:hover{background:var(--brand-soft)}
+#prog{background:linear-gradient(90deg,var(--brand),var(--gold))}
+#bar .cnt{font-size:12.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; font-weight:560}
+#bar button{padding:5px 11px; font-size:13px}
+#prog{position:fixed; top:0; left:0; height:2.5px; background:var(--accent); z-index:600; transition:width .25s}
+#menu{
+  position:fixed; inset:0; background:var(--surface-0); z-index:800; overflow-y:auto;
+  padding:clamp(22px,3.4vw,46px) clamp(22px,4vw,52px) 70px; display:none;
+}
+#menu.on{display:block}
+#menu .mh{display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:6px}
+#menu h2{margin-bottom:0}
+#menu h2::after{content:""; display:block; width:56px; height:3px; border-radius:2px; margin-top:10px;
+  background:linear-gradient(90deg,var(--brand) 0%,var(--brand) 45%,var(--gold) 55%,var(--gold) 100%)}
+.mwrap{max-width:1220px}
+
+/* tarjetas de bloque */
+.blocks{display:grid; grid-template-columns:repeat(auto-fill,minmax(228px,1fr)); gap:11px; margin:24px 0 30px}
+.blk{
+  text-align:left; padding:13px 15px 14px; border-radius:9px; cursor:pointer;
+  border:1px solid var(--line); background:var(--surface-1); position:relative;
+  overflow:hidden; transition:.15s; display:block; width:100%; font-family:inherit;
+}
+.blk::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:linear-gradient(180deg,var(--brand) 0%,var(--brand) 55%,var(--gold) 55%,var(--gold) 100%); opacity:.85}
+.blk:hover{border-color:var(--brand); background:var(--surface-2); transform:translateY(-1px)}
+.blk.now{border-color:var(--brand); background:var(--brand-soft); box-shadow:0 0 0 1px var(--brand) inset}
+.blk .bn{font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--brand); display:block; margin-bottom:5px}
+.blk .bt{font-size:15px; font-weight:640; color:var(--ink); line-height:1.25; display:block; margin-bottom:8px; letter-spacing:-.008em}
+.blk .bm{font-size:11.5px; color:var(--ink-3); font-variant-numeric:tabular-nums; display:flex; gap:9px; flex-wrap:wrap}
+.blk .bm .kbd{font-family:var(--mono); border:1px solid var(--line-strong); border-radius:3px; padding:0 4px; color:var(--ink-2)}
+
+/* lista completa */
+.toc{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:7px}
+.toc button{
+  text-align:left; padding:9px 13px; font-size:13.2px; display:flex; gap:11px; align-items:baseline;
+  border-color:var(--line); background:var(--surface-1); line-height:1.35;
+}
+.toc button.now{border-color:var(--brand); background:var(--brand-soft)}
+.toc button .n{font-family:var(--mono); color:var(--ink-3); font-size:.85em; min-width:2em; flex:none}
+.toc .h{grid-column:1/-1; font-size:11.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--brand); margin:20px 0 4px; padding-bottom:6px; border-bottom:2px solid transparent;
+  border-image:linear-gradient(90deg,var(--brand) 0%,var(--gold) 26%,var(--line) 26%) 1}
+.toc .h:first-child{margin-top:0}
+.msub{font-size:12.5px; color:var(--ink-3); margin:0}
+
+/* ---------- Portada ---------- */
+.cover{
+  background:
+    radial-gradient(1100px 620px at 88% -12%, var(--brand-soft) 0%, transparent 62%),
+    var(--surface-0);
+  padding-left:clamp(34px,5.4vw,104px); padding-right:clamp(24px,4vw,72px);
+}
+.cover::before{
+  content:""; position:absolute; left:0; top:0; bottom:52px; width:9px;
+  background:linear-gradient(180deg,var(--brand) 0%,var(--brand) 58%,var(--gold) 58%,var(--gold) 100%);
+}
+.cover .inst{
+  font-size:clamp(12.5px,1.35vw,17px); line-height:1.62; color:var(--brand);
+  font-weight:640; letter-spacing:.005em; margin:0 0 6px;
+}
+.cover .inst .u{font-size:clamp(14px,1.55vw,20px); font-weight:700; letter-spacing:-.01em; display:block}
+.cover .inst .c{color:var(--ink-2); font-weight:520}
+.cover .rule{
+  height:4px; width:118px; border-radius:2px; margin:0 0 24px;
+  background:linear-gradient(90deg,var(--brand) 0%,var(--brand) 46%,var(--gold) 54%,var(--gold) 100%);
+}
+.cover h1{max-width:none; font-size:clamp(30px,4.9vw,62px)}
+.cover .lead{max-width:52ch}
+.cover .meta{
+  font-size:clamp(12.5px,1.3vw,16.5px); color:var(--ink-2); margin-top:30px; line-height:1.72;
+  padding-left:17px; border-left:3px solid var(--gold);
+}
+.cover .meta b{color:var(--ink); font-weight:660}
+.cover .meta .rol{color:var(--brand); font-weight:640}
+.cover .keys{margin-top:26px}
+@media(max-width:760px){ .cover::before{width:6px} }
+
+/* ---------- Misc ---------- */
+.kpi{display:flex; gap:clamp(18px,3vw,48px); flex-wrap:wrap; margin:18px 0}
+.kpi .k{display:flex; flex-direction:column}
+.kpi .n{font-size:clamp(28px,4vw,48px); font-weight:680; line-height:1; letter-spacing:-.03em; color:var(--ink); font-variant-numeric:tabular-nums}
+.kpi .l{font-size:clamp(11.5px,1.1vw,13.5px); color:var(--ink-3); margin-top:7px; max-width:20ch}
+.raw{font-family:var(--mono); font-size:clamp(11px,1.1vw,14px); color:var(--ink-2); line-height:1.85;
+  background:var(--surface-1); border:1px solid var(--line); border-radius:var(--radius); padding:14px; overflow-x:auto}
+.hint{font-size:clamp(11.5px,1.1vw,13.5px); color:var(--ink-3); font-style:italic}
+.q{border-left:3px solid var(--line-strong); padding-left:16px; margin:16px 0; font-size:clamp(14px,1.4vw,18px); color:var(--ink-2)}
+.q cite{display:block; margin-top:8px; font-size:.85em; color:var(--ink-3); font-style:normal}
+.no{color:var(--warn); font-weight:640}
+.yes{color:var(--ok); font-weight:640}
+.dl{display:flex; flex-wrap:wrap; gap:9px; margin:14px 0}
+.dl a,.dl span.f{
+  display:inline-flex; align-items:center; gap:7px; padding:8px 14px; border-radius:7px;
+  border:1px solid var(--line-strong); background:var(--surface-1); color:var(--ink);
+  font-size:clamp(12px,1.15vw,14.5px); font-weight:540; text-decoration:none;
+}
+.dl a:hover{background:var(--surface-2); border-color:var(--accent)}
+.dl a .mono,.dl span.f .mono{color:var(--ink-3); font-size:.85em}
+.dl span.f{opacity:.7; border-style:dashed}
+
+@media(max-width:760px){
+  .slide{padding:20px 18px 66px}
+  #bar .sec{display:none}
+  .kpi{gap:20px}
+  .samples{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+
+/* ---------- Densidad reducida para láminas cargadas ---------- */
+.slide.dense{padding-top:clamp(18px,2.4vw,38px)}
+.slide.dense h2{font-size:clamp(21px,2.7vw,35px); margin-bottom:8px}
+.slide.dense h2::after{margin-top:7px; width:46px; height:2.5px}
+.slide.dense .chart{padding-top:10px}
+.slide.dense .spss{padding:11px 14px}
+.slide.dense .spss .hd{margin-bottom:8px}
+.slide.dense .spss li{margin-bottom:5px}
+.slide.dense .card,.slide.dense .callout{padding:12px 15px}
+.slide.dense .card h3{font-size:clamp(14px,1.4vw,17px); margin-bottom:7px}
+.slide.dense p,.slide.dense ul,.slide.dense ol{font-size:clamp(12.5px,1.2vw,15.8px); margin-bottom:10px}
+.slide.dense li{margin-bottom:6px}
+.slide.dense .lead{font-size:clamp(14px,1.5vw,19px); margin-bottom:10px}
+.slide.dense .card,.slide.dense .callout,.slide.dense .spss{padding:12px 15px}
+.slide.dense .card h3,.slide.dense .spss b{font-size:clamp(14px,1.35vw,17px)}
+.slide.dense h3{margin-bottom:7px}
+.slide.dense .grid{gap:clamp(12px,1.5vw,22px)}
+.slide.dense .mt{margin-top:13px}
+.slide.dense .mt-s{margin-top:9px}
+.slide.dense .spss ol{font-size:clamp(12px,1.15vw,14.5px)}
+.slide.dense .raw{font-size:clamp(10.5px,1vw,12.8px); padding:11px; line-height:1.6}
+.slide.dense table{font-size:clamp(11.5px,1.05vw,14px)}
+.slide.dense th,.slide.dense td{padding:5px 9px}
+.slide.dense .formula{font-size:clamp(18px,2vw,26px); margin:6px 0 10px}
+.slide.dense .formula.sm{font-size:clamp(15px,1.55vw,20px)}
+.slide.dense .kpi{margin:12px 0}
+.slide.dense .kpi .n{font-size:clamp(24px,3.2vw,40px)}
+
+/* ---------- Print ---------- */
+@media print{
+  @page{size:1280px 800px; margin:0}
+  body{overflow:visible; background:#fff}
+  #bar,#prog,#menu,.tip{display:none !important}
+  #deck{position:static; display:block}
+  .slide{
+    display:flex !important; position:relative; inset:auto; page-break-after:always; break-after:page;
+    min-height:800px; height:800px; width:1280px; animation:none; overflow:hidden; padding:36px 54px;
+  }
+  .slide .card,.slide .callout,.slide .spss{padding:12px 15px}
+  .slide h2{margin-bottom:10px}
+  .slide h2::after{margin-top:8px}
+  .slide .mt{margin-top:15px} .slide .mt-s{margin-top:10px}
+  .slide li{margin-bottom:5px}
+  .slide p{margin-bottom:10px}
+  .slide .grid{gap:16px}
+  .slide table{font-size:13px}
+  .slide th,.slide td{padding:5px 9px}
+  .slide .lead{font-size:17px}
+  .slide-inner > *:last-child{margin-bottom:0 !important}
+  .slide .callout{margin-top:10px; margin-bottom:0}
+}
+
+/* ---------- Ajustes propios de esta presentación ---------- */
+:root{ --red:#c8372d; --green:#3f9a3c; --orange:#e09a2a; --brown:#8a6a1f; --navy:#24398A; }
+:root[data-theme="dark"]{ --red:#e5675e; --green:#6cc069; --orange:#f0b252; --brown:#c9a55a; --navy:#8fa4ec; }
+.eyebrow .dn{color:var(--ink-3); font-weight:560; letter-spacing:.06em}
+.card-b{border:1.5px solid var(--navy)}
+.card-g{border:1.5px solid var(--orange)}
+.card-y{border:1.5px solid var(--gold)}
+.card-r{border:1.5px solid var(--red)}
+.card-v{border:1.5px solid var(--green)}
+.card-m{border:1.5px solid var(--brown)}
+.card-b h3{color:var(--navy)} .card-g h3{color:var(--orange)} .card-y h3{color:var(--gold)}
+.card-r h3{color:var(--red)} .card-v h3{color:var(--green)} .card-m h3{color:var(--brown)}
+.card p:last-child,.card ul:last-child,.card ol:last-child{margin-bottom:0}
+.fbox{
+  background:var(--gold-soft); border:1.5px solid var(--gold); border-radius:var(--radius);
+  padding:10px 16px 12px; overflow-x:auto; max-width:100%;
+}
+.fbox .fl{display:block; font-size:clamp(10px,.95vw,12px); font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--orange); margin-bottom:2px}
+.fbox .formula{margin:4px 0 2px; text-align:center; color:var(--navy)}
+.fbox .ftxt{font-size:clamp(16px,1.9vw,24px); font-weight:680; color:var(--navy); text-align:center; margin:4px 0 2px; line-height:1.3}
+.formula.wrap{white-space:normal}
+.formula.xl{font-size:clamp(34px,5vw,64px)}
+.hl-navy{color:var(--navy); font-weight:660}
+.hl-gold{color:var(--orange); font-weight:660}
+.hl-red{color:var(--red); font-weight:660}
+.tc{text-align:center; margin-left:auto; margin-right:auto}
+.fig{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:10px; margin:0}
+.fig img{display:block; width:100%; height:auto; margin:0 auto}
+.fig figcaption{font-size:clamp(11px,1.05vw,13px); color:#52514e; margin-top:6px}
+.chk{list-style:none; padding-left:0}
+.chk li::before{content:"❑"; color:var(--navy); margin-right:.5em}
+.nums{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(8px,1.6vw,24px); max-width:820px; margin:10px auto 6px}
+.nums span{display:flex; align-items:center; justify-content:center; height:clamp(44px,5.5vw,70px); border-radius:9px;
+  background:var(--surface-2); color:var(--ink-2); font-size:clamp(18px,2.4vw,30px); font-weight:680; font-variant-numeric:tabular-nums; border:1px solid var(--line)}
+.nums span.on{background:var(--gold); color:#1c2440; border-color:var(--gold)}
+.big-c{font-size:clamp(20px,2.5vw,30px); font-weight:680; color:var(--orange); text-align:center; margin:8px 0 14px}
+.steps{font-size:clamp(12.5px,1.2vw,15.5px); color:var(--ink-2); line-height:1.55; margin:0; padding:0; list-style:none}
+.steps li{margin:0 0 3px}
+.steps li.in{padding-left:1.6em}
+.steps b{color:var(--ink)}
+.spss .hd b{color:var(--ink)}
+.svgbox svg{display:block; width:100%; height:auto}
+.svgbox text{font-family:var(--font)}
+.dots{display:flex; gap:14px; margin-top:44px}
+.dots i{width:22px; height:22px; border-radius:50%; display:block}
+.slide.divider{background:#24398A; color:#fff; padding-left:clamp(34px,5.4vw,104px)}
+.slide.divider::before{content:""; position:absolute; left:0; top:0; bottom:52px; width:clamp(14px,2.2vw,26px); background:#E1B73D}
+.slide.divider h2{color:#fff; font-size:clamp(28px,4.2vw,54px)}
+.slide.divider h2::after{background:#E1B73D; width:84px}
+.slide.divider .eyebrow{color:#E1B73D; font-size:clamp(18px,2.2vw,28px); letter-spacing:.02em}
+.slide.divider .eyebrow .dn{color:#c9d2f2; font-size:.55em}
+.slide.divider p.lead{color:#e6e9f5; max-width:62ch}
+.cover .seal{width:clamp(70px,9vw,120px); height:auto; border-radius:50%; display:block; margin:0 0 16px}
+.cover .fac{font-size:clamp(11px,1.15vw,14.5px); font-weight:700; color:var(--brand); letter-spacing:.02em; line-height:1.6; margin:0 0 8px}
+.tbl-31 th,.tbl-31 td{text-align:center}
+.tbl-31 td.sep,.tbl-31 th.sep{border-left:2px solid var(--orange)}
+.t-center th,.t-center td{text-align:center}
+.t-center th:first-child,.t-center td:first-child{text-align:center}
+@media(max-width:760px){
+  .nums{gap:6px}
+  .slide.divider{padding-left:30px}
+  .formula{white-space:normal}
+}
+.slide.dense .fbox .ftxt,.slide .fbox p.ftxt{font-size:clamp(16px,1.9vw,24px); margin:4px 0 2px; max-width:none}
+.t-center thead th,.tbl-31 thead th{text-transform:none; letter-spacing:0; font-size:.95em}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div class="tip" id="tip"></div>
+<div id="deck">
+
+<!-- ============ 1. PORTADA (diapositiva 1) ============ -->
+<section class="slide cover" data-sec="Portada">
+  <div class="slide-inner center">
+    <img class="seal" src="assets/unison_escudo.jpg" alt="Escudo de la Universidad de Sonora" width="150" height="150">
+    <p class="fac">FACULTADAD INTERDISCLIPLINARIA DE CIENCIAS ECONÓMICAS Y ADMINISTRATIVAS<br>DOCTORADO EN CIENCIAS ECONÓMICAS Y ADMINISTRATIVAS</p>
+    <div class="rule"></div>
+    <p class="eyebrow">Capítulo 3</p>
+    <h1>Estadística descriptiva:<br>medidas numéricas</h1>
+    <div class="meta">
+      Alumno: <b>Pavel Raúl Dennis Quiñónez</b><br>
+      Docente: <span class="rol">Dr. Sergio Ramón Rossetti López</span><br>
+      2026 · Sesión del 3 de septiembre de 2026
+    </div>
+    <p class="hint keys">Navega con <kbd>→</kbd> <kbd>←</kbd> · Bloques con <kbd>M</kbd> · Tema con <kbd>T</kbd> · Pantalla completa con <kbd>F</kbd></p>
+  </div>
+</section>
+
+<!-- ============ 2. AGENDA (agregada) ============ -->
+<section class="slide" data-sec="Agenda">
+  <div class="slide-inner">
+    <p class="eyebrow">Ruta de la sesión</p>
+    <h2>Bloques de la presentación</h2>
+    <div class="grid g-6-4 mt">
+      <div class="tbl-wrap">
+        <table class="t-compact t-left">
+          <thead><tr><th>Bloque</th><th>Contenido</th><th>Diapositivas</th></tr></thead>
+          <tbody>
+            <tr><td><b>1</b></td><td>Introducción y fundamentos</td><td>2–3</td></tr>
+            <tr><td><b>2</b></td><td>3.1 Medidas de posición o localización · <span class="badge b1">StartSalary</span></td><td>4–13</td></tr>
+            <tr><td><b>3</b></td><td>3.2 Medidas de variabilidad · <span class="badge b1">BackToSchool</span></td><td>14–23</td></tr>
+            <tr><td><b>4</b></td><td>3.3 Forma, posición relativa y observaciones atípicas · <span class="badge b1">NCAA</span></td><td>24–32</td></tr>
+            <tr><td><b>5</b></td><td>3.4 Análisis exploratorio de datos</td><td>33–36</td></tr>
+            <tr><td><b>6</b></td><td>3.5 Medidas de asociación entre dos variables</td><td>37–39</td></tr>
+            <tr><td><b>7</b></td><td>3.6 Media ponderada y datos agrupados</td><td>40–43</td></tr>
+            <tr><td><b>8</b></td><td>Síntesis y cierre · <span class="badge bw">Visa</span> de tarea</td><td>44–45</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="callout">
+          <span class="k">Bases de datos de la sesión</span>
+          <p class="mb0">Los ejercicios usan <strong>StartSalary</strong>, <strong>BackToSchool</strong> y <strong>NCAA</strong>; la actividad final usa <strong>Visa</strong>. Todas se descargan en la lámina «Materiales».</p>
+        </div>
+        <p class="hint">Cada lámina indica en su encabezado el número de diapositiva de la presentación original.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. Diap. 2 ============ -->
+<section class="slide" data-sec="Introducción">
+  <div class="slide-inner">
+    <p class="eyebrow">Introducción <span class="dn">· diap. 2</span></p>
+    <h2>Propósito y mapa del capítulo</h2>
+    <div class="grid g2 mt">
+      <div>
+        <h3 class="hl-navy">Objetivo</h3>
+        <p class="lead" style="color:var(--ink)">Describir, interpretar y comparar conjuntos de datos mediante medidas numéricas que permitan apoyar el análisis y la toma de decisiones.</p>
+      </div>
+      <div class="grid g2" style="gap:12px">
+        <div class="card card-b"><h3>3.1</h3><p>Medidas de posición / localización</p></div>
+        <div class="card card-g"><h3>3.2</h3><p>Medidas de variabilidad</p></div>
+        <div class="card card-r"><h3>3.3</h3><p>Medidas de la forma de distribución</p></div>
+        <div class="card card-v"><h3>3.4</h3><p>Análisis exploratorio de datos</p></div>
+        <div class="card card-m"><h3>3.5</h3><p>Medidas de asociación entre dos variables</p></div>
+        <div class="card card-y"><h3>3.6</h3><p>Media ponderada y datos agrupados</p></div>
+      </div>
+    </div>
+    <p class="lead mt" style="max-width:none">El capítulo pasa de describir una variable a estudiar la relación entre dos variables y, finalmente, a trabajar con pesos y distribuciones agrupadas.</p>
+  </div>
+</section>
+
+<!-- ============ 4. Diap. 3 ============ -->
+<section class="slide" data-sec="Fundamentos">
+  <div class="slide-inner center">
+    <p class="eyebrow">Fundamentos <span class="dn">· diap. 3</span></p>
+    <h2>Conceptos base: muestra, población y estadísticos</h2>
+    <div class="grid g3 mt">
+      <div class="card card-b"><h3>Muestra</h3><p>Conjunto de observaciones seleccionado para analizar una población.</p></div>
+      <div class="card card-g"><h3>Población</h3><p>Conjunto total de unidades u observaciones de interés.</p></div>
+      <div class="card card-g"><h3>Interpretación</h3><p>En una muestra, las medidas son estadísticos; en una población, son parámetros.</p></div>
+    </div>
+    <div class="grid g2 mt">
+      <div class="fbox"><span class="fl">Media muestral</span><p class="ftxt">x̄ = Σx<sub>i</sub> / n</p></div>
+      <div class="fbox"><span class="fl">Media poblacional</span><p class="ftxt">μ = Σx<sub>i</sub> / N</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. Diap. 4 ============ -->
+<section class="slide divider" data-sec="3.1 Medidas de posición">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 4</span></p>
+    <h2>Medidas de posición o localización</h2>
+    <p class="lead">Ubican el centro o la posición relativa de los datos: media, mediana, moda, percentiles y cuartiles.</p>
+    <div class="dots"><i style="background:#E1B73D"></i><i style="background:#e9a83a"></i><i style="background:#d9473c"></i><i style="background:#5aa846"></i></div>
+  </div>
+</section>
+
+<!-- ============ 6. Diap. 5 ============ -->
+<section class="slide" data-sec="Media">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 5</span></p>
+    <h2>Media</h2>
+    <div class="grid g-6-4 mt">
+      <p class="lead" style="color:var(--ink)">La <strong>media</strong>, o valor medio, es quizá la medida de ubicación más importante para una variable, pues proporciona una medida de la ubicación central de los datos.</p>
+      <div class="formula xl tc" style="align-self:end"><i>x̄</i><span class="op">=</span><span class="frac"><span>Σ<i>x</i><sub>i</sub></span><span><i>n</i></span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. Diap. 6 ============ -->
+<section class="slide" data-sec="Media">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 6</span></p>
+    <h2>Media</h2>
+    <div class="grid g-4-6 mt">
+      <div>
+        <div class="fbox"><span class="fl">Muestra</span><p class="ftxt">x̄ = Σx<sub>i</sub> / n</p></div>
+        <div class="fbox mt-s"><span class="fl">Población</span><p class="ftxt">μ = Σx<sub>i</sub> / N</p></div>
+        <div class="card card-v mt"><h3>Ventaja</h3><p>Usa todas las observaciones.</p></div>
+      </div>
+      <div>
+        <h3 class="hl-navy">Ejemplo del texto</h3>
+        <p style="color:var(--ink)">Tamaños de grupo: 46, 54, 42, 46, 32<br>Σx<sub>i</sub> = 220; n = 5</p>
+        <div class="fbox"><p class="ftxt">x̄ = 220 / 5 = 44 estudiantes</p></div>
+        <p class="mt-s">Interpretación: el tamaño promedio de grupo es 44 estudiantes.</p>
+        <div class="card card-r"><h3>Precaución</h3><p>Valores extremos pueden desplazar la media.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. Diap. 7 ============ -->
+<section class="slide" data-sec="Mediana">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 7</span></p>
+    <h2>Mediana</h2>
+    <p class="lead" style="color:var(--ink);max-width:68ch">La <strong>mediana</strong> es otra medida de ubicación central; es el valor de en medio cuando los datos están acomodados en orden ascendente (del valor menor al valor mayor). Con un número impar de observaciones, la mediana es el valor de en medio. Con un número par, no hay valor de en medio. En este caso se sigue la convención y la mediana se define como el promedio de los valores de las dos observaciones de en medio.</p>
+    <figure class="fig mt" style="max-width:440px;margin-left:auto"><img src="assets/mediana_figura.jpg" alt="Siete figuras ordenadas por estatura; la del centro está marcada como Mediana" width="398" height="156"></figure>
+  </div>
+</section>
+
+<!-- ============ 9. Diap. 8 ============ -->
+<section class="slide" data-sec="Mediana">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 8</span></p>
+    <h2>Mediana</h2>
+    <div class="grid g2 mt">
+      <div>
+        <h3 class="hl-navy">Procedimiento</h3>
+        <ul>
+          <li>Ordenar los datos de menor a mayor.</li>
+          <li>Si n es impar: elegir el valor de en medio.</li>
+          <li>Si n es par: promediar los dos valores centrales.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="hl-navy">Ejemplo: 12 sueldos iniciales</h3>
+        <p class="tc" style="font-size:clamp(18px,2.2vw,26px);font-weight:700;color:var(--ink)">… 3 490 &nbsp;|&nbsp; 3 520 …</p>
+        <div class="fbox"><p class="ftxt">Mediana = (3 490 + 3 520) / 2 = $3 505</p></div>
+      </div>
+    </div>
+    <div class="grid g2 mt">
+      <div class="card card-g"><h3>¿Por qué puede preferirse?</h3><p>Es menos sensible a valores extremos. En los sueldos del ejemplo, sustituir $3 925 por $10 000 cambia mucho la media, pero no la mediana.</p></div>
+      <div class="card card-g"><h3>Aplicaciones</h3><p>Ingresos, precios de vivienda y otros datos donde pueden aparecer valores muy grandes o pequeños.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. Diap. 9 ============ -->
+<section class="slide" data-sec="Moda">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 9</span></p>
+    <h2>Moda</h2>
+    <p class="lead tc hl-navy" style="max-width:none">La moda es el valor que ocurre con mayor frecuencia.</p>
+    <div class="nums"><span>32</span><span>42</span><span class="on">46</span><span class="on">46</span><span>54</span></div>
+    <p class="big-c">Moda = 46</p>
+    <div class="grid g3">
+      <div class="card card-b"><h3>Bimodal</h3><p>Exactamente dos modas.</p></div>
+      <div class="card card-v"><h3>Multimodal</h3><p>Más de dos modas.</p></div>
+      <div class="card card-r"><h3>Sin moda útil</h3><p>Cuando listar muchas modas no aporta una descripción clara.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. Diap. 10 ============ -->
+<section class="slide" data-sec="Percentiles">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 10</span></p>
+    <h2>Percentíles</h2>
+    <div class="grid g-6-4 mt">
+      <div>
+        <p style="color:var(--ink)">Un <strong>percentil</strong> proporciona información sobre cómo se distribuyen los datos en el intervalo del valor menor al valor mayor.</p>
+        <p style="color:var(--ink)"><strong>Los colegios y universidades suelen reportar los resultados de los exámenes de admisión en términos de percentiles.</strong> Por <u>ejemplo</u>, suponga que <u>un solicitante obtiene una puntuación bruta de 54 en la parte verbal de un examen de admisión. Esta información no dice mucho acerca del desempeño que este estudiante tuvo en relación con otros que presentaron el mismo examen. Sin embargo, si la puntuación bruta de 54 corresponde al percentil 70, se sabe que aproximadamente 70% de los estudiantes obtuvo una puntuación menor a la de esta persona y alrededor de 30% alcanzó una puntuación mayor a la de esta persona.</u></p>
+      </div>
+      <figure class="fig" style="align-self:end"><img src="assets/percentiles_campana.jpg" alt="Curva en forma de campana con los percentiles 5, 25, 50, 75 y 95 marcados" width="576" height="347"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. Diap. 11 ============ -->
+<section class="slide" data-sec="Percentiles">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 11</span></p>
+    <h2>Percentíles</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">Un percentil p divide los datos de modo que aproximadamente p% de las observaciones queda por debajo y (100−p)% por encima.</p>
+    <div class="grid g2 mt">
+      <div class="fbox" style="align-self:start"><span class="fl">Índice del percentil</span><p class="ftxt">i = (p / 100)n</p></div>
+      <ol>
+        <li>Ordenar los datos ascendentemente.</li>
+        <li>Calcular i.</li>
+        <li>Si i no es entero, tomar la siguiente posición entera mayor.</li>
+        <li>Si i es entero, promediar los valores en posiciones i e i+1.</li>
+      </ol>
+    </div>
+    <div class="fbox mt"><span class="fl">Ejemplo del capítulo</span><p class="ftxt">P85: i = (85/100)(12) = 10.2 → posición 11 → $3 730</p></div>
+    <p class="tc mt-s" style="max-width:none">Ejemplo de interpretación: percentil 70 ≈ 70% obtuvo una puntuación menor y ≈30% una mayor.</p>
+  </div>
+</section>
+
+<!-- ============ 13. Diap. 12 ============ -->
+<section class="slide" data-sec="Cuartiles">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 12</span></p>
+    <h2>Cuartíles</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">A menudo es recomendable dividir los datos en cuatro partes, cada una de las cuales contiene aproximadamente un cuarto, o 25% de las observaciones.</p>
+    <div class="svgbox" style="max-width:900px;margin:10px auto 0"><svg viewBox="0 0 900 140" role="img" aria-label="Recta de 0% a 100% con Q1 en 25%, Q2 en 50% y Q3 en 75%">
+<text x="30.0" y="18" text-anchor="middle" style="font-size:13px;fill:var(--ink-3)">0%</text>
+<text x="240.0" y="18" text-anchor="middle" style="font-size:13px;fill:var(--ink-3)">25%</text>
+<text x="450.0" y="18" text-anchor="middle" style="font-size:13px;fill:var(--ink-3)">50%</text>
+<text x="660.0" y="18" text-anchor="middle" style="font-size:13px;fill:var(--ink-3)">75%</text>
+<text x="870.0" y="18" text-anchor="middle" style="font-size:13px;fill:var(--ink-3)">100%</text>
+<rect x="30.0" y="51" width="840" height="8" style="fill:var(--navy)"/>
+<circle cx="240.0" cy="55" r="15" style="fill:#E1B73D;stroke:#1c2440;stroke-width:1"/>
+<text x="240.0" y="104" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--navy)">Q1</text>
+<text x="240.0" y="130" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">P25</text>
+<circle cx="450.0" cy="55" r="15" style="fill:#E1B73D;stroke:#1c2440;stroke-width:1"/>
+<text x="450.0" y="104" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--navy)">Q2</text>
+<text x="450.0" y="130" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">P50 = Mediana</text>
+<circle cx="660.0" cy="55" r="15" style="fill:#E1B73D;stroke:#1c2440;stroke-width:1"/>
+<text x="660.0" y="104" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--navy)">Q3</text>
+<text x="660.0" y="130" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">P75</text>
+</svg></div>
+    <p class="tc mt-s" style="max-width:none;color:var(--ink);font-weight:680">Q1 = percentil 25 • Q2 = percentil 50 (mediana) • Q3 = percentil 75</p>
+    <div class="fbox mt"><span class="fl">Sueldos iniciales</span><p class="ftxt">Ejemplo: Q1 = $3 465 &nbsp;|&nbsp; Q2 = $3 505 &nbsp;|&nbsp; Q3 = $3 600</p></div>
+    <p class="hint tc mt-s" style="max-width:none;font-style:normal">Nota: pueden existir pequeñas diferencias según la convención usada para calcular cuartiles.</p>
+  </div>
+</section>
+
+<!-- ============ 14. Diap. 13 ============ -->
+<section class="slide" data-sec="Ejercicio StartSalary">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 13</span></p>
+    <h2>Ejercicio StartSalary</h2>
+    <p class="mt" style="max-width:none"><b style="color:var(--orange)">TABLA 3.1</b> &nbsp;<span style="color:var(--orange)">Sueldos mensuales iniciales para una muestra de 12 licenciados en administración de empresas recién egresados</span></p>
+    <div class="tbl-wrap">
+      <table class="tbl-31" style="max-width:860px">
+        <thead><tr><th>Graduate</th><th>Monthly Starting Salary ($)</th><th class="sep">Graduate</th><th>Monthly Starting Salary ($)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>3450</td><td class="sep">7</td><td>3490</td></tr>
+          <tr><td>2</td><td>3550</td><td class="sep">8</td><td>3730</td></tr>
+          <tr><td>3</td><td>3650</td><td class="sep">9</td><td>3540</td></tr>
+          <tr><td>4</td><td>3480</td><td class="sep">10</td><td>3925</td></tr>
+          <tr><td>5</td><td>3355</td><td class="sep">11</td><td>3520</td></tr>
+          <tr><td>6</td><td>3310</td><td class="sep">12</td><td>3480</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead" style="color:var(--ink)">Obtener Media, Mediana, Moda, Percentíles y Cuartíles.</p>
+    <div class="dl"><a href="datos/StartSalary.sav" download="1.1. StartSalary.sav">StartSalary <span class="mono">.sav</span></a></div>
+  </div>
+</section>
+
+<!-- ============ 15. Diap. 14 ============ -->
+<section class="slide divider" data-sec="3.2 Medidas de variabilidad">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 14</span></p>
+    <h2>Medidas de variabilidad</h2>
+    <p class="lead">Miden cuánto se dispersan los datos: rango, rango intercuartílico, varianza, desviación estándar y coeficiente de variación.</p>
+    <div class="dots"><i style="background:#E1B73D"></i><i style="background:#e9a83a"></i><i style="background:#d9473c"></i><i style="background:#5aa846"></i></div>
+  </div>
+</section>
+
+<!-- ============ 16. Diap. 15 ============ -->
+<section class="slide" data-sec="Medidas de variabilidad">
+  <div class="slide-inner">
+    <p class="eyebrow">3.1 <span class="dn">· diap. 15</span></p>
+    <h2>Medidas de variabilidad</h2>
+    <div class="grid g-6-4 mt">
+      <div>
+        <p class="lead" style="color:var(--ink)">Además de las medidas de posición, con frecuencia es conveniente considerar las medidas de variabilidad o dispersión.</p>
+        <ul class="chk lead" style="color:var(--ink)">
+          <li>Rango,</li>
+          <li>Rango intercuartílico,</li>
+          <li>Varianza,</li>
+          <li>Desviación estándar y</li>
+          <li>Coeficiente de variación.</li>
+        </ul>
+      </div>
+      <figure class="fig" style="align-self:end;max-width:360px"><img src="assets/variabilidad_campana.jpg" alt="Curva en forma de campana con tres franjas de dispersión alrededor del centro" width="493" height="378"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 17. Diap. 16 ============ -->
+<section class="slide dense" data-sec="Rango">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 16</span></p>
+    <h2>Rango</h2>
+    <p class="lead">La medida de variabilidad más sencilla es el <strong>rango.</strong></p>
+    <p class="tc hl-navy" style="font-size:clamp(16px,1.9vw,23px);max-width:none">Dos proveedores pueden tener la misma media y, sin embargo, distinta confiabilidad.</p>
+    <div class="grid g2">
+      <div class="card card-v"><h3>Dawson Supply</h3><p style="font-size:clamp(15px,1.5vw,19px)">9&nbsp; 10&nbsp; 10&nbsp; 10&nbsp; 11&nbsp; 11&nbsp; 10&nbsp; 11&nbsp; 10&nbsp; 10</p><p class="tc"><b>Media ≈ 10 días</b></p></div>
+      <div class="card card-r"><h3>J.C. Clark</h3><p style="font-size:clamp(15px,1.5vw,19px)">7&nbsp; 7&nbsp; 8&nbsp; 10&nbsp; 10&nbsp; 10&nbsp; 11&nbsp; 12&nbsp; 13&nbsp; 15</p><p class="tc"><b>Media ≈ 10 días</b></p></div>
+    </div>
+    <div class="grid g2 mt">
+      <div>
+        <p style="color:var(--ink);font-weight:700;font-size:clamp(15px,1.6vw,20px)">La menor dispersión de Dawson la hace más consistente para la planeación.</p>
+        <p>La variabilidad genera incertidumbre en la planeación de producción y en la selección de proveedores.</p>
+      </div>
+      <figure class="fig"><img src="assets/figura_3_2_dawson_clark.jpg" alt="Figura 3.2: datos históricos que muestran el número de días requerido para surtir los pedidos, histogramas de Dawson Supply y J.C. Clark" width="1332" height="611"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 18. Diap. 17 ============ -->
+<section class="slide" data-sec="Rango intercuartílico">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 17</span></p>
+    <h2>Rango intercuartílico</h2>
+    <div class="grid g2 mt">
+      <div class="fbox"><span class="fl">Rango</span><p class="ftxt">Rango = valor mayor − valor menor</p></div>
+      <div class="fbox"><span class="fl">Rango intercuartílico</span><p class="ftxt">RIC = Q3 − Q1</p></div>
+    </div>
+    <h3 class="hl-navy mt">Sueldos del ejemplo</h3>
+    <ul style="color:var(--ink);list-style:none;padding-left:0;max-width:none">
+      <li>Mayor = $3 925; menor = $3 310 → rango = $615.</li>
+      <li>Q3 = $3 600; Q1 = $3 465 → RIC = $135.</li>
+      <li>El RIC representa el rango de la mitad central de los datos y es menos dependiente de valores extremos.</li>
+    </ul>
+    <div class="card card-y mt"><h3>Idea clave</h3><p>El rango usa solo dos observaciones (datos); el RIC se concentra en el 50% central.</p></div>
+  </div>
+</section>
+
+<!-- ============ 19. Diap. 18 ============ -->
+<section class="slide" data-sec="Varianza">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 18</span></p>
+    <h2>Varianza</h2>
+    <div class="grid g2 mt">
+      <div class="fbox"><span class="fl">Población</span><p class="ftxt">σ² = Σ(x<sub>i</sub> − μ)² / N</p></div>
+      <div class="fbox"><span class="fl">Muestra</span><p class="ftxt">s² = Σ(x<sub>i</sub> − x̄)² / (n − 1)</p></div>
+    </div>
+    <div class="grid g-6-4 mt">
+      <div>
+        <h3 class="hl-navy">La lógica</h3>
+        <ol style="color:var(--ink)">
+          <li>Calcular la desviación de cada observación respecto de la media.</li>
+          <li>Elevar las desviaciones al cuadrado para evitar que se cancelen.</li>
+          <li>Promediar las desviaciones cuadradas; en la muestra se divide entre n−1.</li>
+          <li>La varianza queda expresada en unidades cuadradas.</li>
+        </ol>
+      </div>
+      <div class="card card-g"><h3>Ejemplo</h3><p>Tamaños de grupo: Σ(x<sub>i</sub>−x̄)² = 256<br>n−1 = 4<br>s² = 256/4 = 64</p><p>Mayor varianza → mayor variabilidad.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 20. Diap. 19 ============ -->
+<section class="slide" data-sec="Desviación estándar y CV">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 19</span></p>
+    <h2>Desviación estándar / coeficiente de variación</h2>
+    <div class="grid g2 mt">
+      <div class="fbox"><span class="fl">Desviación estándar</span><p class="ftxt">s = √s² &nbsp;&nbsp;|&nbsp;&nbsp; σ = √σ²</p></div>
+      <div class="fbox"><span class="fl">Coeficiente de variación</span><p class="ftxt">CV = (desviación estándar / media) × 100%</p></div>
+    </div>
+    <div class="grid g2 mt">
+      <div class="card card-b"><h3>Interpretación de s</h3><p>Está en las mismas unidades que los datos. Para los sueldos: s = $165.65, lo que facilita su comparación con la media ($3,540).</p></div>
+      <div class="card card-g"><h3>Interpretación de CV</h3><p>Es una medida relativa. Tamaños de grupo: 18.2%. Sueldos: 4.7%. Es útil cuando las medias y desviaciones estándar están en escalas distintas.</p></div>
+    </div>
+    <p class="tc hl-gold mt" style="max-width:none;font-size:clamp(15px,1.6vw,20px)">Regla práctica del capítulo: menor CV → menor variabilidad relativa.</p>
+  </div>
+</section>
+
+<!-- ============ 21. Diap. 20 ============ -->
+<section class="slide" data-sec="Tiempos de entrega">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 20</span></p>
+    <h2>Comparación empresarial: variabilidad en tiempos de entrega</h2>
+    <div class="grid g-6-4 mt">
+      <div class="svgbox"><svg viewBox="0 0 640 360" role="img" aria-label="Gráfica de líneas: Dispersión de Datos, Dawson y J.C. Clark">
+<text x="320.0" y="22" text-anchor="middle" style="font-size:17px;font-weight:700;fill:var(--ink)">Dispersión de Datos</text>
+<line x1="46" x2="624" y1="290.0" y2="290.0" style="stroke:var(--line-strong);stroke-width:1"/>
+<text x="38" y="295.0" text-anchor="end" style="font-size:14px;fill:var(--ink-2)">5</text>
+<line x1="46" x2="624" y1="240.0" y2="240.0" style="stroke:var(--line-strong);stroke-width:1"/>
+<text x="38" y="245.0" text-anchor="end" style="font-size:14px;fill:var(--ink-2)">7</text>
+<line x1="46" x2="624" y1="190.0" y2="190.0" style="stroke:var(--line-strong);stroke-width:1"/>
+<text x="38" y="195.0" text-anchor="end" style="font-size:14px;fill:var(--ink-2)">9</text>
+<line x1="46" x2="624" y1="140.0" y2="140.0" style="stroke:var(--line-strong);stroke-width:1"/>
+<text x="38" y="145.0" text-anchor="end" style="font-size:14px;fill:var(--ink-2)">11</text>
+<line x1="46" x2="624" y1="89.99999999999999" y2="89.99999999999999" style="stroke:var(--line-strong);stroke-width:1"/>
+<text x="38" y="94.99999999999999" text-anchor="end" style="font-size:14px;fill:var(--ink-2)">13</text>
+<line x1="46" x2="624" y1="40.0" y2="40.0" style="stroke:var(--line-strong);stroke-width:1"/>
+<text x="38" y="45.0" text-anchor="end" style="font-size:14px;fill:var(--ink-2)">15</text>
+<line x1="46" x2="46" y1="40" y2="290" style="stroke:var(--ink-3);stroke-width:1"/>
+<text x="74.9" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">1</text>
+<text x="132.7" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">2</text>
+<text x="190.5" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">3</text>
+<text x="248.3" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">4</text>
+<text x="306.1" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">5</text>
+<text x="363.9" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">6</text>
+<text x="421.7" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">7</text>
+<text x="479.5" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">8</text>
+<text x="537.3" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">9</text>
+<text x="595.1" y="312" text-anchor="middle" style="font-size:14px;fill:var(--ink-2)">10</text>
+<polyline points="74.9,140.0 132.7,165.0 190.5,190.0 248.3,165.0 306.1,140.0 363.9,140.0 421.7,165.0 479.5,140.0 537.3,165.0 595.1,165.0" style="fill:none;stroke:#4a7cc4;stroke-width:2.5"/>
+<rect x="70.9" y="136.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 1: 11 días</title></rect>
+<rect x="128.7" y="161.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 2: 10 días</title></rect>
+<rect x="186.5" y="186.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 3: 9 días</title></rect>
+<rect x="244.3" y="161.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 4: 10 días</title></rect>
+<rect x="302.1" y="136.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 5: 11 días</title></rect>
+<rect x="359.9" y="136.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 6: 11 días</title></rect>
+<rect x="417.7" y="161.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 7: 10 días</title></rect>
+<rect x="475.5" y="136.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 8: 11 días</title></rect>
+<rect x="533.3" y="161.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 9: 10 días</title></rect>
+<rect x="591.1" y="161.0" width="8" height="8" style="fill:#4a7cc4"><title>Dawson, pedido 10: 10 días</title></rect>
+<polyline points="74.9,215.0 132.7,165.0 190.5,90.0 248.3,240.0 306.1,165.0 363.9,140.0 421.7,165.0 479.5,240.0 537.3,40.0 595.1,115.0" style="fill:none;stroke:#c0504d;stroke-width:2.5"/>
+<path d="M74.9 210.0 L79.9 215.0 L74.9 220.0 L69.9 215.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 1: 8 días</title></path>
+<path d="M132.7 160.0 L137.7 165.0 L132.7 170.0 L127.69999999999999 165.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 2: 10 días</title></path>
+<path d="M190.5 84.99999999999999 L195.5 89.99999999999999 L190.5 94.99999999999999 L185.5 89.99999999999999 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 3: 13 días</title></path>
+<path d="M248.3 235.0 L253.3 240.0 L248.3 245.0 L243.3 240.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 4: 7 días</title></path>
+<path d="M306.1 160.0 L311.1 165.0 L306.1 170.0 L301.1 165.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 5: 10 días</title></path>
+<path d="M363.9 135.0 L368.9 140.0 L363.9 145.0 L358.9 140.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 6: 11 días</title></path>
+<path d="M421.7 160.0 L426.7 165.0 L421.7 170.0 L416.7 165.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 7: 10 días</title></path>
+<path d="M479.5 235.0 L484.5 240.0 L479.5 245.0 L474.5 240.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 8: 7 días</title></path>
+<path d="M537.3 35.0 L542.3 40.0 L537.3 45.0 L532.3 40.0 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 9: 15 días</title></path>
+<path d="M595.1 110.00000000000001 L600.1 115.00000000000001 L595.1 120.00000000000001 L590.1 115.00000000000001 Z" style="fill:#c0504d"><title>J.C. Clark, pedido 10: 12 días</title></path>
+<line x1="190.0" x2="220.0" y1="344" y2="344" style="stroke:#4a7cc4;stroke-width:2.5"/><rect x="201.0" y="340" width="8" height="8" style="fill:#4a7cc4"/>
+<text x="226.0" y="349" style="font-size:15px;fill:var(--ink)">Dawson</text>
+<line x1="325.0" x2="355.0" y1="344" y2="344" style="stroke:#c0504d;stroke-width:2.5"/><path d="M340.0 339 L345.0 344 L340.0 349 L335.0 344 Z" style="fill:#c0504d"/>
+<text x="361.0" y="349" style="font-size:15px;fill:var(--ink)">J.C. Clark</text>
+</svg></div>
+      <div>
+        <div class="card card-v"><h3>Dawson</h3><p>Rango = 2 días<br>Menor dispersión → mayor consistencia</p></div>
+        <div class="card card-r mt-s"><h3>J.C. Clark</h3><p>Rango = 8 días<br>Mayor dispersión → más incertidumbre</p></div>
+        <p class="tc mt" style="font-weight:700">El capítulo enfatiza que una media idéntica no implica igual confiabilidad.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 22. Diap. 21 ============ -->
+<section class="slide" data-sec="Ejercicio BackToSchool">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 21</span></p>
+    <h2>Ejercicio BackToSchool</h2>
+    <p class="lead mt" style="color:var(--ink);max-width:none">La Federación Nacional de Minoristas informó que los estudiantes universitarios de primer año gastan más en artículos de regreso a clases que cualquier otro grupo universitario (<em>USA Today,</em> 4 de agosto de 2006). El archivo BackToSchool contiene una base de datos muestrales que compara los gastos de regreso a clases de 25 estudiantes de primer año y 20 del último año.</p>
+    <ol type="a" class="lead" style="color:var(--ink);max-width:none">
+      <li>¿Cuál es el gasto medio de regreso a clases de cada grupo? ¿Los datos son consistentes con el informe de la Federación Nacional de Minoristas?</li>
+      <li>¿Cuál es el rango de los gastos de cada grupo?</li>
+      <li>¿Cuál es el rango intercuartílico para cada grupo?</li>
+      <li>¿Cuál es la desviación estándar de los gastos de cada grupo?</li>
+      <li>¿Qué gastos de regreso a clases muestran más variación: los de los estudiantes de primer año o los de los universitarios de último año?</li>
+    </ol>
+    <div class="dl"><a href="datos/BackToSchool.sav" download="2.1. BackToSchool.sav">BackToSchool <span class="mono">.sav</span></a></div>
+  </div>
+</section>
+
+<!-- ============ 23. Diap. 22 ============ -->
+<section class="slide dense" data-sec="Ejercicio BackToSchool">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 22</span></p>
+    <h2>Ejercicio BackToSchool</h2>
+    <div class="grid g2 mt">
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>a) Gasto medio de cada grupo</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>2.1. BackToSchool.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Descriptivos...</span></li>
+          <li>Selecciona las variables:</li>
+          <li class="in">Freshman</li>
+          <li class="in">Seniors</li>
+          <li>Pásalas a <b>Variables</b>.</li>
+          <li>Haz clic en <b>Opciones...</b></li>
+          <li>Marca:</li>
+          <li class="in"><b>Media</b></li>
+          <li class="in"><b>Desviación estándar</b></li>
+          <li class="in"><b>Mínimo</b></li>
+          <li class="in"><b>Máximo</b></li>
+          <li>Haz clic en <b>Continuar</b>.</li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+          <li>SPSS te mostrará la tabla <b>Estadísticos descriptivos</b>.</li>
+        </ul>
+      </div>
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>b) Rango de gastos de cada grupo</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>2.1. BackToSchool.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Frecuencias...</span></li>
+          <li>Selecciona las variables:</li>
+          <li class="in">Freshman</li>
+          <li class="in">Seniors</li>
+          <li>Pásalas a <b>Variables</b>.</li>
+          <li>Haz clic en <b>Estadísticos...</b></li>
+          <li>En la sección dispersión marca:</li>
+          <li class="in"><b>Rango</b></li>
+          <li class="in"><b>Mínimo</b></li>
+          <li class="in"><b>Máximo</b></li>
+          <li>Haz clic en <b>Continuar</b>.</li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+          <li>SPSS te generará una tabla con los resultados.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 24. Diap. 23 ============ -->
+<section class="slide dense" data-sec="Ejercicio BackToSchool">
+  <div class="slide-inner">
+    <p class="eyebrow">3.2 <span class="dn">· diap. 23</span></p>
+    <h2>Ejercicio BackToSchool</h2>
+    <div class="grid g2 mt">
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>c) Rango intercuartílico (RIC) de cada grupo</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>2.1. BackToSchool.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Frecuencias...</span></li>
+          <li>Selecciona las variables:</li>
+          <li class="in">Freshman</li>
+          <li class="in">Seniors</li>
+          <li>Pásalas a <b>Variables</b>.</li>
+          <li>Haz clic en <b>Estadísticos...</b></li>
+          <li>Marca:</li>
+          <li class="in"><b>Cuartíles</b></li>
+          <li class="in"><b>Percentíles (25, 50 y 75)</b></li>
+          <li>Haz clic en <b>Continuar</b>.</li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+          <li>SPSS te generará una tabla con los resultados.</li>
+        </ul>
+      </div>
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>d) Desviación estándar de cada grupo</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>2.1. BackToSchool.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Frecuencias...</span></li>
+          <li>Selecciona las variables:</li>
+          <li class="in">Freshman</li>
+          <li class="in">Seniors</li>
+          <li>Pásalas a <b>Variables</b>.</li>
+          <li>Haz clic en <b>Estadísticos...</b></li>
+          <li>En la sección dispersión marca:</li>
+          <li class="in"><b>Desviación estándar</b></li>
+          <li class="in"><b>Rango</b></li>
+          <li class="in"><b>Mínimo</b></li>
+          <li class="in"><b>Máximo</b></li>
+          <li>Haz clic en <b>Continuar</b>.</li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+          <li>SPSS te generará una tabla con los resultados.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 25. Diap. 24 ============ -->
+<section class="slide divider" data-sec="3.3 Forma, posición relativa y atípicos">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 24</span></p>
+    <h2>Forma, posición relativa y observaciones atípicas</h2>
+    <p class="lead">El sesgo describe la forma; el valor z ubica una observación; Chebyshev y la regla empírica permiten estimar proporciones; las puntuaciones z ayudan a detectar atípicos.</p>
+    <div class="dots"><i style="background:#E1B73D"></i><i style="background:#e9a83a"></i><i style="background:#d9473c"></i><i style="background:#5aa846"></i></div>
+  </div>
+</section>
+
+<!-- ============ 26. Diap. 25 ============ -->
+<section class="slide" data-sec="Sesgo">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 25</span></p>
+    <h2>Forma de la distribución: sesgo</h2>
+    <div class="svgbox mt" style="max-width:960px"><svg viewBox="0 0 960 330" role="img" aria-label="Tres histogramas: sesgo negativo, simétrica y sesgo positivo">
+<rect x="24.0" y="202" width="32" height="48" style="fill:#24398A"/>
+<rect x="60.5" y="130" width="32" height="120" style="fill:#24398A"/>
+<rect x="97.0" y="34" width="32" height="216" style="fill:#24398A"/>
+<rect x="133.5" y="70" width="32" height="180" style="fill:#24398A"/>
+<rect x="170.0" y="130" width="32" height="120" style="fill:#24398A"/>
+<rect x="206.5" y="178" width="32" height="72" style="fill:#24398A"/>
+<rect x="243.0" y="214" width="32" height="36" style="fill:#24398A"/>
+<rect x="20" y="262" width="270" height="5" rx="2" style="fill:var(--line-strong)"/>
+<text x="155" y="292" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--navy)">Sesgo negativo</text>
+<text x="155" y="316" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--navy)">(izquierda)</text>
+<rect x="339.0" y="202" width="32" height="48" style="fill:#5aa846"/>
+<rect x="375.5" y="130" width="32" height="120" style="fill:#5aa846"/>
+<rect x="412.0" y="58" width="32" height="192" style="fill:#5aa846"/>
+<rect x="448.5" y="10" width="32" height="240" style="fill:#5aa846"/>
+<rect x="485.0" y="58" width="32" height="192" style="fill:#5aa846"/>
+<rect x="521.5" y="130" width="32" height="120" style="fill:#5aa846"/>
+<rect x="558.0" y="202" width="32" height="48" style="fill:#5aa846"/>
+<rect x="335" y="262" width="270" height="5" rx="2" style="fill:var(--line-strong)"/>
+<text x="470" y="292" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--green)">Simétrica</text>
+<text x="470" y="316" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--green)">(sesgo = 0)</text>
+<rect x="654.0" y="214" width="32" height="36" style="fill:#e9a83a"/>
+<rect x="690.5" y="178" width="32" height="72" style="fill:#e9a83a"/>
+<rect x="727.0" y="130" width="32" height="120" style="fill:#e9a83a"/>
+<rect x="763.5" y="70" width="32" height="180" style="fill:#e9a83a"/>
+<rect x="800.0" y="34" width="32" height="216" style="fill:#e9a83a"/>
+<rect x="836.5" y="118" width="32" height="132" style="fill:#e9a83a"/>
+<rect x="873.0" y="190" width="32" height="60" style="fill:#e9a83a"/>
+<rect x="650" y="262" width="270" height="5" rx="2" style="fill:var(--line-strong)"/>
+<text x="785" y="292" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--orange)">Sesgo positivo</text>
+<text x="785" y="316" text-anchor="middle" style="font-size:19px;font-weight:700;fill:var(--orange)">(derecha)</text>
+</svg></div>
+    <p class="tc mt" style="max-width:none">Simétrica: media ≈ mediana • Sesgo positivo: media &gt; mediana • Sesgo negativo: media &lt; mediana.</p>
+  </div>
+</section>
+
+<!-- ============ 27. Diap. 26 ============ -->
+<section class="slide dense" data-sec="Valor z">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 26</span></p>
+    <h2>Valor z</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">El valor <em>z</em> para cualquier observación puede interpretarse como una medida de la posición relativa de la observación en un conjunto de datos. Por tanto, se dice que las observaciones de dos conjuntos de datos diferentes con el mismo valor <em>z</em> tienen la misma posición relativa en términos de que presentan igual número de desviaciones estándar de la media.</p>
+    <div class="grid g2 mt">
+      <div>
+        <div class="fbox"><span class="fl">Puntuación z muestral</span><p class="ftxt">z<sub>i</sub> = (x<sub>i</sub> − x̄) / s</p></div>
+        <ul class="mt-s" style="color:var(--ink);list-style:none;padding-left:0">
+          <li>z &gt; 0: observación por encima de la media.</li>
+          <li>z &lt; 0: observación por debajo de la media.</li>
+          <li>z = 0: observación igual a la media.</li>
+          <li>El valor absoluto de z indica cuántas desviaciones estándar separan al dato de la media.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card"><h3 class="hl-navy">Ejemplo del capítulo</h3><p>x̄ = 44, s = 8<br>Para x = 32: z = (32−44)/8 = −1.50</p></div>
+        <div class="svgbox mt" style="max-width:460px"><svg viewBox="0 0 460 80" role="img" aria-label="Escala de −3σ a +1σ con un marcador en −3σ">
+<text x="25.0" y="20" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink-2)">−3σ</text>
+<text x="127.5" y="20" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink-2)">−2σ</text>
+<text x="230.0" y="20" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink-2)">−1σ</text>
+<text x="332.5" y="20" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--navy)">0</text>
+<text x="435.0" y="20" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink-2)">+1σ</text>
+<rect x="20" y="44" width="430" height="10" rx="5" style="fill:var(--line-strong)"/>
+<circle cx="25" cy="49" r="14" style="fill:#E1B73D"/>
+</svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 28. Diap. 27 ============ -->
+<section class="slide" data-sec="Chebyshev">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 27</span></p>
+    <h2>Teorema de Chebyshev</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">El teorema de Chebyshev permite hacer afirmaciones acerca de la proporción de los valores de datos que deben estar dentro de un número específico de desviaciones estándar de la media.</p>
+    <div class="fbox mt"><span class="fl">Chebyshev</span><p class="ftxt" style="font-size:clamp(15px,1.6vw,20px)">Al menos 1 − 1/z² de los datos está dentro de z desviaciones estándar de la media (z &gt; 1).</p></div>
+    <div class="grid g3 mt">
+      <div class="card card-b"><h3>z = 2</h3><p style="font-size:clamp(20px,2.2vw,28px)">≥ 75%</p></div>
+      <div class="card card-g"><h3>z = 3</h3><p style="font-size:clamp(20px,2.2vw,28px)">≥ 89%</p></div>
+      <div class="card card-v"><h3>z = 4</h3><p style="font-size:clamp(20px,2.2vw,28px)">≥ 94%</p></div>
+    </div>
+    <p class="tc mt" style="max-width:none;color:var(--ink);font-weight:700">Ejemplo: media 70, s = 5. Entre 60 y 80 hay ±2s → al menos 75% de los estudiantes.</p>
+    <p class="tc" style="max-width:none">Ventaja: se aplica a cualquier conjunto de datos, independientemente de su forma de distribución.</p>
+  </div>
+</section>
+
+<!-- ============ 29. Diap. 28 ============ -->
+<section class="slide" data-sec="Regla empírica">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 28</span></p>
+    <h2>Teorema de Chebyshev</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">Una de las ventajas del teorema de Chebyshev estriba en que se aplica a cualquier conjunto de datos sin importar su forma de distribución. De hecho, podría usarse con cualquiera de las distribuciones de la figura 3.3. Sin embargo, en muchas aplicaciones prácticas los conjuntos de datos exhiben una distribución simétrica con forma de pila o de campana.</p>
+    <figure class="fig" style="max-width:560px;margin:8px auto 14px"><img src="assets/campana_regla_empirica.jpg" alt="Curva normal en forma de campana con su eje central" width="1600" height="800"></figure>
+    <div class="grid g3">
+      <div class="card card-b"><h3>±1s</h3><p>≈ 68% de los datos</p></div>
+      <div class="card card-g"><h3>±2s</h3><p>≈ 95% de los datos</p></div>
+      <div class="card card-y"><h3>±3s</h3><p>Casi todos los datos</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 30. Diap. 29 ============ -->
+<section class="slide" data-sec="Observaciones atípicas">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 29</span></p>
+    <h2>Observaciones atípicas</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">Un conjunto de datos a veces tiene una o más observaciones con valores inusualmente grandes o sumamente pequeños. Estos valores extremos se llaman <strong>observaciones atípicas</strong>.</p>
+    <div class="grid g-6-4 mt">
+      <ul style="color:var(--ink);list-style:none;padding-left:0">
+        <li>Una observación atípica tiene un valor inusualmente grande o pequeño.</li>
+        <li>Puede deberse a un error de registro, captura o ser un valor real e inusual.</li>
+        <li>Debe verificarse antes de eliminarla.</li>
+        <li>Con puntuaciones z, el capítulo recomienda revisar valores con z &lt; −3 o z &gt; +3.</li>
+        <li>El análisis con diagrama de caja ofrece otra vía de detección.</li>
+      </ul>
+      <div>
+        <div class="card card-r"><h3>Decisión correcta</h3><p>No eliminar automáticamente: primero verificar exactitud y pertinencia.</p></div>
+        <div class="card card-y mt-s"><h3>Ejemplo</h3><p>En los tamaños de grupo, z = −1.50 no alcanza el umbral de ±3; no se identifica un atípico por este método.</p></div>
+      </div>
+    </div>
+    <p class="tc hl-navy mt" style="max-width:none">Buscar atípicos antes de tomar decisiones mejora la calidad del análisis.</p>
+  </div>
+</section>
+
+<!-- ============ 31. Diap. 30 ============ -->
+<section class="slide" data-sec="Ejercicio NCAA">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 30</span></p>
+    <h2>Ejercicio NCAA</h2>
+    <p class="lead mt" style="color:var(--ink);max-width:none">Una muestra de puntuaciones de 10 partidos de basquetbol colegial de la NCAA proporcionó los datos siguientes (<em>USA Today,</em> 26 de enero de 2004).</p>
+    <ol type="a" class="lead" style="color:var(--ink);max-width:none">
+      <li>Calcule la media y la desviación estándar de los puntos anotados por el equipo ganador.</li>
+      <li>Suponga que los puntos anotados por los equipos triunfadores en todos los partidos de la NCAA siguen una distribución con forma de campana. Utilizando la media y la desviación estándar obtenidas en el inciso <em>a</em>), estime el porcentaje de los partidos de la NCAA en los cuales el equipo ganador anota 84 puntos o más. Calcule el porcentaje de los partidos de la NCAA en los cuales el equipo triunfador anota más de 90 puntos.</li>
+      <li>Calcule la media y la desviación estándar del margen de victoria. ¿Los datos contienen observaciones atípicas? Explique por qué.</li>
+    </ol>
+    <div class="dl"><a href="datos/NCAA.sav" download="3.1. NCAA.sav">NCAA <span class="mono">.sav</span></a></div>
+  </div>
+</section>
+
+<!-- ============ 32. Diap. 31 ============ -->
+<section class="slide dense" data-sec="Ejercicio NCAA">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 31</span></p>
+    <h2>Ejercicio NCAA</h2>
+    <div class="grid g2 mt">
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>a) Media y desviación estándar</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>3.1. NCAA.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Frecuencias...</span></li>
+          <li>Seleccionar la variable:</li>
+          <li class="in">Puntos del equipo ganador (points)</li>
+          <li>Pasarla a <b>Variables</b>.</li>
+          <li>Haz clic en <b>Estadísticos...</b></li>
+          <li>Marca:</li>
+          <li class="in"><b>Media</b></li>
+          <li class="in"><b>Desviación estándar</b></li>
+          <li class="in">Desmarcar <b>Mostrar tablas de frecuencias</b></li>
+          <li>Haz clic en <b>Continuar</b>.</li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+          <li>SPSS te generará una tabla con los resultados.</li>
+        </ul>
+      </div>
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>b) Porcentaje en los que el ganador anota 84 y 90 puntos o más</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>3.1. NCAA.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Transformar → Calcular variable...</span></li>
+          <li>En <b>Variable de destino</b>, escribe: Z84</li>
+          <li>En <b>Expresión numérica</b>, escribe: <span class="mono">(84-76.5)/7.01</span></li>
+          <li>En <b>Variable de destino</b>, escribe: P84</li>
+          <li>En <b>Expresión numérica</b>, escribe: <span class="mono">1-(84-76.5)/7.01</span></li>
+          <li>En <b>Variable de destino</b>, escribe: P84</li>
+          <li>En <b>Expresión numérica</b>, escribe: <span class="mono">1-(90-76.5)/7.01</span></li>
+          <li>Funciones y variables especiales: <span class="mono">CDF.NORMAL</span></li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 33. Diap. 32 ============ -->
+<section class="slide dense" data-sec="Ejercicio NCAA">
+  <div class="slide-inner">
+    <p class="eyebrow">3.3 <span class="dn">· diap. 32</span></p>
+    <h2>Ejercicio NCAA</h2>
+    <div class="grid g2 mt">
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>c) Media y Desviación Std. Magen de la victoria</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>3.1. NCAA.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Transformar → Calcular variable...</span></li>
+          <li>En <b>Variable objetivo</b>, MargenVictoria</li>
+          <li>En <b>Expresión numérica</b>, PuntosGanador - PuntosPerdedor</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Frecuencias</span></li>
+          <li>Selecciona Estadísticos</li>
+          <li>Marca: Media, Desviación Estándar, Mínimo, Máximo, Cuartíles</li>
+          <li><b>Continuar</b></li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+        </ul>
+      </div>
+      <div class="spss">
+        <div class="hd"><span class="tag">SPSS</span><b>Valores atípicos</b></div>
+        <ul class="steps">
+          <li><b>En SPSS</b></li>
+          <li>Abre <b>3.1. NCAA.sav</b>.</li>
+          <li>Ve al menú:</li>
+          <li><span class="path">Analizar → Estadísticos descriptivos → Explorar</span></li>
+          <li>Coloca: <b>MargenVictoria → Lista de dependientes</b></li>
+          <li><b>Después Gráficos</b> Selecciona: <b>Diagramas de caja</b></li>
+          <li>Factor de niveles juntos</li>
+          <li><b>Continuar</b></li>
+          <li>Haz clic en <b>Aceptar</b>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 34. Diap. 33 ============ -->
+<section class="slide divider" data-sec="3.4 Análisis exploratorio de datos">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.4 <span class="dn">· diap. 33</span></p>
+    <h2>Análisis exploratorio de datos</h2>
+    <p class="lead">Resume y visualiza la distribución mediante el resumen de cinco números y el diagrama de caja.</p>
+    <div class="dots"><i style="background:#E1B73D"></i><i style="background:#e9a83a"></i><i style="background:#d9473c"></i><i style="background:#5aa846"></i></div>
+  </div>
+</section>
+
+<!-- ============ 35. Diap. 34 ============ -->
+<section class="slide" data-sec="Resumen de cinco números">
+  <div class="slide-inner">
+    <p class="eyebrow">3.4 <span class="dn">· diap. 34</span></p>
+    <h2>Resumen de cinco números</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">La manera más fácil de elaborar un resumen de cinco números es colocar primero los datos en orden ascendente. Una vez hecho esto es fácil identificar el valor menor, los tres cuartiles y el valor mayor.</p>
+    <div class="grid mt" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px">
+      <div class="card card-b"><h3>1</h3><p>Valor menor</p></div>
+      <div class="card card-g"><h3>2</h3><p>Q1</p></div>
+      <div class="card card-g"><h3>3</h3><p>Mediana (Q2)</p></div>
+      <div class="card card-v"><h3>4</h3><p>Q3</p></div>
+      <div class="card card-r"><h3>5</h3><p>Valor mayor</p></div>
+    </div>
+    <h3 class="hl-navy mt">Ejemplo: sueldos iniciales</h3>
+    <div class="fbox"><span class="fl">Resumen de cinco números</span><p class="ftxt">$3 310 &nbsp;|&nbsp; $3 465 &nbsp;|&nbsp; $3 505 &nbsp;|&nbsp; $3 600 &nbsp;|&nbsp; $3 925</p></div>
+    <p class="tc mt-s" style="max-width:none">Entre números adyacentes hay aproximadamente 25% de las observaciones.</p>
+  </div>
+</section>
+
+<!-- ============ 36. Diap. 35 ============ -->
+<section class="slide" data-sec="Diagrama de caja">
+  <div class="slide-inner">
+    <p class="eyebrow">3.4 <span class="dn">· diap. 35</span></p>
+    <h2>Diagrama de caja</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">Un <strong>diagrama de caja</strong> es un resumen gráfico de los datos basado en un resumen de cinco números. La clave para elaborar de un diagrama de caja es el cálculo de la mediana y los cuartiles <em>Q</em>1 y <em>Q</em>3.</p>
+    <div class="svgbox" style="max-width:880px;margin:6px auto 0"><svg viewBox="0 0 880 400" role="img" aria-label="Diagrama de caja de los sueldos iniciales: 3,310; Q1 3,465; mediana 3,505; Q3 3,600; 3,730; atípico 3,925">
+<text x="326" y="47" text-anchor="middle" style="font-size:15px;font-weight:700;fill:var(--orange)">Mediana</text>
+<text x="263" y="100" text-anchor="middle" style="font-size:15px;font-weight:700;fill:var(--navy)">Q1</text>
+<text x="409" y="100" text-anchor="middle" style="font-size:15px;font-weight:700;fill:var(--green)">Q3</text>
+<text x="743" y="127" text-anchor="middle" style="font-size:15px;font-weight:700;fill:var(--red)">Atípico</text>
+<rect x="98" y="207" width="165" height="5" style="fill:var(--navy)"/>
+<rect x="405" y="207" width="150" height="5" style="fill:var(--navy)"/>
+<rect x="98" y="170" width="3" height="80" style="fill:var(--navy)"/>
+<rect x="555" y="170" width="3" height="80" style="fill:var(--navy)"/>
+<rect x="262" y="143" width="142" height="147" style="fill:var(--brand-soft);stroke:var(--navy);stroke-width:2"/>
+<rect x="315" y="143" width="4" height="147" style="fill:var(--orange)"/>
+<circle cx="746" cy="202" r="8" style="fill:var(--red)"/>
+<rect x="15" y="323" width="840" height="7" style="fill:var(--ink-2)"/>
+<text x="98" y="382" text-anchor="middle" style="font-size:13px;fill:var(--ink-2)">3,310</text>
+<text x="263" y="382" text-anchor="middle" style="font-size:13px;fill:var(--ink-2)">3,465</text>
+<text x="315" y="382" text-anchor="middle" style="font-size:13px;fill:var(--ink-2)">3,505</text>
+<text x="405" y="382" text-anchor="middle" style="font-size:13px;fill:var(--ink-2)">3,600</text>
+<text x="555" y="382" text-anchor="middle" style="font-size:13px;fill:var(--ink-2)">3,730</text>
+<text x="743" y="382" text-anchor="middle" style="font-size:13px;fill:var(--ink-2)">3,925</text>
+</svg></div>
+    <div class="fbox mt-s"><span class="fl">Regla del diagrama de caja</span><p class="ftxt">Límites = Q1 − 1.5(RIC) &nbsp;y&nbsp; Q3 + 1.5(RIC)</p></div>
+  </div>
+</section>
+
+<!-- ============ 37. Diap. 36 ============ -->
+<section class="slide" data-sec="Diagrama de caja">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.4 <span class="dn">· diap. 36</span></p>
+    <h2>Diagrama de caja</h2>
+    <figure class="fig mt"><img src="assets/figura_3_5_diagrama_caja.jpg" alt="Figura 3.5: diagrama de caja de los datos de los sueldos iniciales con líneas que muestran los límites superior e inferior, Q1, mediana, Q3, 1.5(RIC) y una observación atípica" width="1151" height="482"></figure>
+  </div>
+</section>
+
+<!-- ============ 38. Diap. 37 ============ -->
+<section class="slide divider" data-sec="3.5 Medidas de asociación">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.5 <span class="dn">· diap. 37</span></p>
+    <h2>Medidas de asociación entre dos variables</h2>
+    <p class="lead">La covarianza y el coeficiente de correlación describen la asociación lineal entre dos variables.</p>
+    <div class="dots"><i style="background:#E1B73D"></i><i style="background:#e9a83a"></i><i style="background:#d9473c"></i><i style="background:#5aa846"></i></div>
+  </div>
+</section>
+
+<!-- ============ 39. Diap. 38 ============ -->
+<section class="slide" data-sec="Covarianza">
+  <div class="slide-inner">
+    <p class="eyebrow">3.5 <span class="dn">· diap. 38</span></p>
+    <h2>Covarianza</h2>
+    <p class="lead" style="color:var(--ink);max-width:none">La covarianza se define como una medida de la relación entre las variaciones de dos variables, indicando si tienden a aumentar o disminuir juntas.</p>
+    <div class="grid g2 mt">
+      <div class="fbox"><span class="fl">Covarianza muestral</span><p class="ftxt">sxy = Σ(x<sub>i</sub>−x̄)(y<sub>i</sub>−ȳ) / (n−1)</p></div>
+      <div class="fbox"><span class="fl">Covarianza poblacional</span><p class="ftxt">σxy = Σ(x<sub>i</sub>−μx)(y<sub>i</sub>−μy) / N</p></div>
+    </div>
+    <div class="grid g2 mt">
+      <ul style="color:var(--ink);list-style:none;padding-left:0">
+        <li>Empareja cada x<sub>i</sub> con su y<sub>i</sub> correspondiente.</li>
+        <li>Multiplica las desviaciones de cada variable respecto de su media.</li>
+        <li>Suma los productos y divide por n−1 (muestra).</li>
+      </ul>
+      <div class="card card-g"><h3>Ejemplo: tienda de estéreos</h3><p>x̄ = 3 comerciales; ȳ = 51 (cientos de dólares)<br>Σ(x<sub>i</sub>−x̄)(y<sub>i</sub>−ȳ) = 99<br>sxy = 99/9 = 11</p></div>
+    </div>
+    <p class="tc hl-red mt" style="max-width:none">La covarianza es sensible a las unidades de medida.</p>
+  </div>
+</section>
+
+<!-- ============ 40. Diap. 39 ============ -->
+<section class="slide" data-sec="Covarianza">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.5 <span class="dn">· diap. 39</span></p>
+    <h2>Covarianza</h2>
+    <div class="grid g3 mt">
+      <div class="card card-v"><h3>sxy &gt; 0</h3><p>Asociación positiva</p><p>Cuando x aumenta, y tiende a aumentar.</p></div>
+      <div class="card card-y"><h3>sxy ≈ 0</h3><p>Sin asociación lineal</p><p>No se observa una asociación lineal clara.</p></div>
+      <div class="card card-r"><h3>sxy &lt; 0</h3><p>Asociación negativa</p><p>Cuando x aumenta, y tiende a disminuir.</p></div>
+    </div>
+    <p class="tc mt" style="max-width:none;color:var(--ink);font-weight:700;font-size:clamp(15px,1.6vw,20px)">Limitación: un valor grande o pequeño de covarianza depende de las unidades de x-y.</p>
+    <p class="tc hl-navy" style="max-width:none;font-size:clamp(15px,1.6vw,20px)">Por ello se utiliza una medida estandarizada: el coeficiente de correlación.</p>
+  </div>
+</section>
+
+<!-- ============ 41. Diap. 40 ============ -->
+<section class="slide divider" data-sec="3.6 Media ponderada y datos agrupados">
+  <div class="slide-inner center">
+    <p class="eyebrow">3.6 <span class="dn">· diap. 40</span></p>
+    <h2>Media ponderada y trabajo con datos agrupados</h2>
+    <p class="lead">Cuando las observaciones tienen distinta importancia o sólo se dispone de una distribución de frecuencia, la media simple puede no ser adecuada.</p>
+    <div class="dots"><i style="background:#E1B73D"></i><i style="background:#e9a83a"></i><i style="background:#d9473c"></i><i style="background:#5aa846"></i></div>
+  </div>
+</section>
+
+<!-- ============ 42. Diap. 41 ============ -->
+<section class="slide" data-sec="Media ponderada">
+  <div class="slide-inner">
+    <p class="eyebrow">3.6 <span class="dn">· diap. 41</span></p>
+    <h2>Media ponderada</h2>
+    <div class="grid g2 mt">
+      <div>
+        <div class="fbox"><span class="fl">Media ponderada</span><p class="ftxt">x̄w = Σ(w<sub>i</sub> x<sub>i</sub>) / Σw<sub>i</sub></p></div>
+        <ul class="mt" style="color:var(--ink);list-style:none;padding-left:0">
+          <li>x<sub>i</sub> = valor de la observación i.</li>
+          <li>w<sub>i</sub> = peso o importancia de la observación i.</li>
+          <li>Se usa cuando las observaciones no tienen la misma importancia.</li>
+          <li>Ejemplos: cantidades compradas, créditos escolares, dólares invertidos o volumen.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card card-g"><h3>Ejemplo: materia prima</h3><p>Costos: $3.00, $3.40, $2.80, $2.90, $3.25<br>Pesos (libras): 1 200, 500, 2 750, 1 000, 800</p><p>Media ponderada = $2.96/lb</p></div>
+        <p class="tc hl-red mt">La media simple sería $3.07 y sobreestimaría el costo medio real por libra adquirida.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 43. Diap. 42 ============ -->
+<section class="slide" data-sec="Datos agrupados">
+  <div class="slide-inner">
+    <p class="eyebrow">3.6 <span class="dn">· diap. 42</span></p>
+    <h2>Media muestral agrupada</h2>
+    <div class="grid g2 mt">
+      <div>
+        <div class="fbox"><span class="fl">Media muestral agrupada</span><p class="ftxt">x̄ = Σ f<sub>i</sub> M<sub>i</sub> / n</p></div>
+        <p class="tc mt" style="font-size:clamp(15px,1.5vw,19px)">M<sub>i</sub> = punto medio de la clase<br>f<sub>i</sub> = frecuencia de la clase<br>n = tamaño muestral</p>
+      </div>
+      <div>
+        <div class="tbl-wrap">
+          <table class="t-center">
+            <thead><tr><th>Clase</th><th>M<sub>i</sub></th><th>f<sub>i</sub></th><th>f<sub>i</sub>M<sub>i</sub></th></tr></thead>
+            <tbody>
+              <tr><td>10–14</td><td>12</td><td>4</td><td>48</td></tr>
+              <tr><td>15–19</td><td>17</td><td>8</td><td>136</td></tr>
+              <tr><td>20–24</td><td>22</td><td>5</td><td>110</td></tr>
+              <tr><td>25–29</td><td>27</td><td>2</td><td>54</td></tr>
+              <tr><td>30–34</td><td>32</td><td>1</td><td>32</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="fbox"><span class="fl">Ejemplo de auditorías</span><p class="ftxt">Σf<sub>i</sub> = 20; &nbsp;Σf<sub>i</sub>M<sub>i</sub> = 380 &nbsp;→&nbsp; x̄ = 380/20 = 19 días</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 44. Diap. 43 ============ -->
+<section class="slide" data-sec="Datos agrupados">
+  <div class="slide-inner">
+    <p class="eyebrow">3.6 <span class="dn">· diap. 43</span></p>
+    <h2>Varianza muestral agrupada</h2>
+    <div class="grid g2 mt">
+      <div class="fbox"><span class="fl">Varianza muestral agrupada</span><p class="ftxt">s² = Σ f<sub>i</sub>(M<sub>i</sub> − x̄)² / (n − 1)</p></div>
+      <div class="fbox"><span class="fl">Desviación estándar</span><p class="ftxt">s = √s²</p></div>
+    </div>
+    <div class="grid g-6-4 mt">
+      <ul style="color:var(--ink);list-style:none;padding-left:0">
+        <li>Los valores individuales x<sub>i</sub> no se conocen.</li>
+        <li>El punto medio M<sub>i</sub> representa a los datos de su clase.</li>
+        <li>Cada desviación cuadrada se pondera por la frecuencia f<sub>i</sub>.</li>
+        <li>En el ejemplo de auditorías: Σf<sub>i</sub>(M<sub>i</sub>−x̄)² = 570.</li>
+        <li>s² = 570/19 = 30; s = √30 ≈ 5.48 días.</li>
+      </ul>
+      <div class="card card-y"><h3>Advertencia metodológica</h3><p>Las medidas calculadas con datos agrupados son aproximaciones. Cuando sea posible, se recomienda usar los datos originales.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 45. Diap. 44 ============ -->
+<section class="slide" data-sec="Síntesis">
+  <div class="slide-inner center">
+    <p class="eyebrow">Síntesis <span class="dn">· diap. 44</span></p>
+    <h2>Aplicación integradora: decisiones con estadística descriptiva</h2>
+    <div class="grid g3 mt">
+      <div class="card card-b"><h3>1. Describir</h3><p class="lead">Calcular media, mediana, moda, percentiles y cuartiles para conocer el centro y la posición.</p></div>
+      <div class="card card-g"><h3>2. Diagnosticar</h3><p class="lead">Medir rango, RIC, varianza, desviación estándar y CV; revisar sesgo y atípicos.</p></div>
+      <div class="card card-v"><h3>3. Relacionar y decidir</h3><p class="lead">Usar covarianza/correlación para asociación lineal y medias ponderadas cuando los pesos importan.</p></div>
+    </div>
+    <p class="tc hl-navy mt" style="max-width:none;font-size:clamp(15px,1.6vw,20px)">Principio del capítulo: una medida aislada rara vez es suficiente; la interpretación surge de combinar centro, dispersión, forma y relación.</p>
+  </div>
+</section>
+
+<!-- ============ 46. Diap. 45 ============ -->
+<section class="slide" data-sec="Cierre">
+  <div class="slide-inner center">
+    <p class="eyebrow">Cierre <span class="dn">· diap. 45</span></p>
+    <h2>Actividades de aprendizaje sugeridas</h2>
+    <p class="lead mt" style="color:var(--ink)">De la base de datos Visa.sav realizaran los siguientes ejercicios:</p>
+    <ul class="lead" style="color:var(--ink)">
+      <li>Calcule la media y la mediana.</li>
+      <li>Estime el primer y tercer cuartiles.</li>
+      <li>Calcule el rango y el rango intercuartílico.</li>
+      <li>Determine la varianza y la desviación estándar.</li>
+      <li>¿Los datos contienen observaciones atípicas?</li>
+    </ul>
+    <div class="dl"><a href="datos/Visa.sav" download="Visa.sav">Visa <span class="mono">.sav</span></a></div>
+    <p class="hint mt" style="font-style:normal">Las actividades se inspiran en los ejercicios de métodos y aplicaciones incluidos al final de cada sección del capítulo.</p>
+  </div>
+</section>
+
+<!-- ============ 47. MATERIALES (agregada) ============ -->
+<section class="slide" data-sec="Materiales">
+  <div class="slide-inner center">
+    <p class="eyebrow">Materiales de la sesión</p>
+    <h2>Lo que necesitas tener a la mano</h2>
+    <div class="grid g-6-4 mt">
+      <div>
+        <div class="card">
+          <h3>Bases de datos para SPSS</h3>
+          <p class="hint">Abren directo en SPSS. Se descargan con el nombre que usa la presentación (por ejemplo, <span class="mono">2.1. BackToSchool.sav</span>).</p>
+          <div class="dl">
+            <a href="datos/StartSalary.sav" download="1.1. StartSalary.sav" title="12 sueldos iniciales · diap. 13">StartSalary <span class="mono">.sav</span></a>
+            <a href="datos/BackToSchool.sav" download="2.1. BackToSchool.sav" title="Gastos de regreso a clases · diap. 21–23">BackToSchool <span class="mono">.sav</span></a>
+            <a href="datos/NCAA.sav" download="3.1. NCAA.sav" title="10 partidos de la NCAA · diap. 30–32">NCAA <span class="mono">.sav</span></a>
+            <a href="datos/Stereo.sav" download="5.1. Stereo.sav" title="Tienda de estéreos · diap. 38">Stereo <span class="mono">.sav</span></a>
+            <a href="datos/Visa.sav" download="Visa.sav" title="Actividad de cierre · diap. 45">Visa <span class="mono">.sav</span></a>
+            <a href="datos/Employee_data.sav" download="Employee data.sav" title="Archivo de ejemplo de SPSS, 474 empleados">Employee data <span class="mono">.sav</span></a>
+          </div>
+          <p class="hint mb0">StartSalary (diap. 13), BackToSchool (21–23), NCAA (30–32), Stereo (ejemplo de la diap. 38), Visa (actividad de la diap. 45) y Employee data (base de ejemplo de SPSS usada en la sesión).</p>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Documentos</h3>
+          <div class="dl" style="flex-direction:column">
+            <a href="docs/Presentacion_Capitulo3_Estadistica_Descriptiva_UNISON.pptx" download>Presentación original <span class="mono">PPTX</span></a>
+            <a href="https://doi.org/10.1016/j.jretconser.2024.104219" target="_blank" rel="noopener">Artículo Alfadhel (2025) <span class="mono">DOI</span></a>
+          </div>
+          <p class="hint mb0">Alfadhel, M. (2025). Unpacking when and how business analytics affect firm performance and customer satisfaction: A longitudinal examination. <em>Journal of Retailing and Consumer Services, 84</em>, 104219. <a href="https://doi.org/10.1016/j.jretconser.2024.104219" target="_blank" rel="noopener">doi:10.1016/j.jretconser.2024.104219</a></p>
+        </div>
+        <div class="callout mt-s">
+          <span class="k">Libro de texto</span>
+          <p class="mb0">Anderson, Sweeney y Williams, <em>Estadística para negocios y economía</em>, capítulo 3: Estadística descriptiva: medidas numéricas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 48. ÍNDICE FINAL ============ -->
+<section class="slide" data-sec="Índice">
+  <div class="slide-inner center">
+    <p class="eyebrow">Universidad de Sonora · Doctorado en Ciencias Económicas y Administrativas</p>
+    <h2>Estadística descriptiva: medidas numéricas</h2>
+    <p class="lead">Pulsa cualquier bloque para volver a él. También funcionan las teclas <kbd>1</kbd> a <kbd>8</kbd>.</p>
+    <div class="blocks" id="blocks-fin" style="margin:22px 0 0"></div>
+    <p class="hint mt">Pavel Raúl Dennis Quiñónez · Dr. Sergio Ramón Rossetti López · Septiembre 2026</p>
+  </div>
+</section>
+
+</div><!-- /#deck -->
+
+<div id="menu">
+  <div class="mwrap">
+    <div class="mh">
+      <h2>Bloques de la sesión</h2>
+      <p class="msub">Pulsa el número del bloque para saltar directo · <kbd>M</kbd> o <kbd>Esc</kbd> para volver</p>
+    </div>
+    <div class="blocks" id="blocks"></div>
+    <h3 style="font-size:15px;margin-bottom:14px">Todas las láminas</h3>
+    <div class="toc" id="toc"></div>
+  </div>
+</div>
+
+<div id="bar">
+  <button id="btn-menu" title="Bloques (M)">Bloques</button>
+  <button id="btn-prev" title="Anterior (←)">←</button>
+  <button id="btn-next" title="Siguiente (→)">→</button>
+  <span class="sec" id="secname"></span>
+  <button id="btn-theme" title="Tema (T)">Tema</button>
+  <button id="btn-print" title="Exportar a PDF">PDF</button>
+  <span class="cnt" id="counter"></span>
+</div>
+
+<script>
+"use strict";
+/* ==================== UTILIDADES ==================== */
+const $ = (s,r) => (r||document).querySelector(s);
+const $$ = (s,r) => Array.from((r||document).querySelectorAll(s));
+const TIP = $("#tip");
+function tipOff(){ TIP.classList.remove("on"); }
+
+/* ==================== MOTOR DE DIAPOSITIVAS ==================== */
+const slides = $$(".slide");
+let cur = 0;
+/* a y b son la primera y la última lámina (1-indexadas); dp son las diapositivas originales */
+const BLOQUES = [
+  {k:"",  t:"Apertura",                                  a:1,  b:2,  dp:"1",     d:"Portada y ruta de la sesión"},
+  {k:"1", t:"Introducción y fundamentos",                a:3,  b:4,  dp:"2–3",   d:"Objetivo, mapa del capítulo, muestra y población"},
+  {k:"2", t:"3.1 Medidas de posición",                   a:5,  b:14, dp:"4–13",  d:"Media, mediana, moda, percentiles, cuartiles · StartSalary"},
+  {k:"3", t:"3.2 Medidas de variabilidad",               a:15, b:24, dp:"14–23", d:"Rango, RIC, varianza, desviación estándar, CV · BackToSchool"},
+  {k:"4", t:"3.3 Forma, posición relativa y atípicos",   a:25, b:33, dp:"24–32", d:"Sesgo, valor z, Chebyshev, regla empírica · NCAA"},
+  {k:"5", t:"3.4 Análisis exploratorio de datos",        a:34, b:37, dp:"33–36", d:"Resumen de cinco números y diagrama de caja"},
+  {k:"6", t:"3.5 Medidas de asociación",                 a:38, b:40, dp:"37–39", d:"Covarianza y su interpretación"},
+  {k:"7", t:"3.6 Media ponderada y datos agrupados",     a:41, b:44, dp:"40–43", d:"Media ponderada, media y varianza agrupadas"},
+  {k:"8", t:"Síntesis y cierre",                         a:45, b:46, dp:"44–45", d:"Aplicación integradora y actividad con Visa"},
+  {k:"",  t:"Materiales e índice",                       a:47, b:48, dp:"",      d:"Descargas y navegación final"},
+];
+const bloqueDe = n => BLOQUES.find(x=> n>=x.a && n<=x.b) || BLOQUES[0];
+
+function go(i){
+  cur = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach((s,k)=>s.classList.toggle("active", k===cur));
+  slides[cur].scrollTop = 0;
+  $("#counter").textContent = `${cur+1} / ${slides.length}`;
+  const bq = bloqueDe(cur+1);
+  const sec = slides[cur].dataset.sec || "";
+  const cola = (sec && sec !== bq.t) ? bq.t + " · " + sec : bq.t;
+  $("#secname").innerHTML =
+    (bq.k ? `<span class="bchip">Bloque ${bq.k}</span><span>${cola}</span>`
+          : `<span class="bchip g">${bq.t}</span>${sec && sec!==bq.t ? `<span>${sec}</span>` : ""}`);
+  $("#prog").style.width = ((cur+1)/slides.length*100)+"%";
+  marcarMenu();
+  try{ location.hash = "d"+(cur+1); }catch(e){}
+  tipOff();
+}
+function irABloque(idx){
+  const bq = BLOQUES[idx];
+  if(!bq) return;
+  go(bq.a-1);
+  $("#menu").classList.remove("on");
+}
+function marcarMenu(){
+  const bq = bloqueDe(cur+1);
+  $$("#blocks .blk").forEach((b,i)=>b.classList.toggle("now", BLOQUES[i]===bq));
+  $$("#toc button").forEach((b,i)=>b.classList.toggle("now", i===cur));
+}
+function next(){ go(cur+1); }
+function prev(){ go(cur-1); }
+
+document.addEventListener("keydown", e=>{
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  const menuOpen = $("#menu").classList.contains("on");
+  if(e.key==="Escape"){ $("#menu").classList.remove("on"); return; }
+  if(e.key==="m"||e.key==="M"){ $("#menu").classList.toggle("on"); return; }
+  if(menuOpen) return;
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); next(); }
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); prev(); }
+  else if(e.key==="Home"){ go(0); }
+  else if(e.key==="End"){ go(slides.length-1); }
+  else if(e.key>="1" && e.key<="8"){ irABloque(+e.key); }
+  else if(e.key==="0"){ go(0); }
+  else if(e.key==="t"||e.key==="T"){ toggleTheme(); }
+  else if(e.key==="f"||e.key==="F"){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(()=>{});
+  }
+});
+
+/* gestos táctiles */
+let tx=0, ty=0;
+document.addEventListener("touchstart", e=>{ tx=e.changedTouches[0].clientX; ty=e.changedTouches[0].clientY; }, {passive:true});
+document.addEventListener("touchend", e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>62 && Math.abs(dx)>Math.abs(dy)*1.6){ dx<0?next():prev(); }
+}, {passive:true});
+
+$("#btn-next").onclick = next;
+$("#btn-prev").onclick = prev;
+$("#btn-menu").onclick = ()=>$("#menu").classList.toggle("on");
+$("#btn-print").onclick = ()=>{ $("#menu").classList.remove("on"); setTimeout(()=>window.print(), 90); };
+
+/* navegador de bloques + índice completo */
+function tarjetasBloque(cont, conNumero){
+  BLOQUES.forEach((bq,i)=>{
+    const n = bq.b - bq.a + 1;
+    const b = document.createElement("button");
+    b.className = "blk";
+    b.title = bq.d;
+    b.innerHTML =
+      `<span class="bn">${bq.k ? "Bloque "+bq.k : "&nbsp;"}</span>` +
+      `<span class="bt">${bq.t}</span>` +
+      `<span class="bm"><span>${n} lámina${n>1?"s":""}</span>` +
+      (bq.dp ? `<span>·</span><span>diap. ${bq.dp}</span>` : "") +
+      (conNumero && bq.k ? `<span class="kbd">${bq.k}</span>` : "") + `</span>`;
+    b.onclick = ()=>irABloque(i);
+    cont.appendChild(b);
+  });
+}
+(function buildMenu(){
+  tarjetasBloque($("#blocks"), true);
+  const toc = $("#toc");
+  let last = null;
+  slides.forEach((s,i)=>{
+    const bq = bloqueDe(i+1);
+    const etq = (bq.k ? "Bloque "+bq.k+" · " : "") + bq.t;
+    if(etq!==last){
+      const h = document.createElement("div"); h.className="h"; h.textContent = etq;
+      toc.appendChild(h); last = etq;
+    }
+    const h2 = s.querySelector("h1,h2");
+    const b = document.createElement("button");
+    const titulo = h2 ? h2.innerHTML.replace(/<br\s*\/?>/gi," ").replace(/<[^>]+>/g,"").replace(/\s+/g," ").trim() : (s.dataset.sec||"");
+    b.innerHTML = `<span class="n">${i+1}</span><span>${titulo}</span>`;
+    b.onclick = ()=>{ go(i); $("#menu").classList.remove("on"); };
+    toc.appendChild(b);
+  });
+  const fin = $("#blocks-fin");
+  if(fin) tarjetasBloque(fin, true);
+})();
+
+/* tema */
+function toggleTheme(){
+  const now = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", now);
+  try{ localStorage.setItem("tema", now); }catch(e){}
+}
+$("#btn-theme").onclick = toggleTheme;
+(function initTheme(){
+  let t = null;
+  try{ t = localStorage.getItem("tema"); }catch(e){}
+  if(!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+})();
+
+/* ==================== ARRANQUE ==================== */
+const h = (location.hash||"").match(/^#d(\d+)$/);
+go(h ? Math.min(slides.length, Math.max(1, +h[1]))-1 : 0);
+window.addEventListener("hashchange", ()=>{
+  const m = (location.hash||"").match(/^#d(\d+)$/);
+  if(m && +m[1]-1 !== cur) go(Math.min(slides.length, Math.max(1, +m[1]))-1);
+});
+window.addEventListener("beforeprint", ()=>slides.forEach(s=>s.classList.add("active")));
+window.addEventListener("afterprint", ()=>go(cur));
+</script>
+</body>
+</html>
